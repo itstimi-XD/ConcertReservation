@@ -78,3 +78,28 @@
       SeatRepositoryJpaImpl.kt  // 좌석 리포지토리 JPA 구현체
     /payment
       PaymentRepositoryJpaImpl.kt  // 결제 리포지토리 JPA 구현체
+```
+      
+## 시퀀스 다이어그램
+
+### 1. 유저 토큰 발급 시퀀스 다이어그램
+![유저 토큰 발급 다이어그램](./document/sequence/user_token_issue.png)
+
+### 2. 좌석 예약 요청 시퀀스 다이어그램
+![좌석 예약 요청 다이어그램](./document/sequence/seat_reservation_request.png)
+
+### 3. 결제 처리 시퀀스 다이어그램
+![결제 처리 다이어그램](./document/sequence/payment_processing.png)
+
+---
+
+## 플로우 차트
+
+### 1. 대기열 관리 플로우 차트
+![대기열 관리 플로우 차트](./document/flowchart/queue_management_flow.png)
+
+### 2. 좌석 예약 및 결제 플로우 차트
+![좌석 예약 및 결제 플로우 차트](./document/flowchart/seat_reservation_payment_flow.png)
+
+### 3. 잔액 충전 플로우 차트
+![잔액 충전 플로우 차트](./document/flowchart/balance_charge_flow.png)
