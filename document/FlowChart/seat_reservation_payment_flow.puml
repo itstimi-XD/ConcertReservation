@@ -1,0 +1,16 @@
+@startuml
+start
+:좌석 예약 요청;
+if (좌석 예약 가능?) then (Yes)
+    :임시 예약 처리;
+    :타이머 시작 (5분);
+    if (결제 완료?) then (Yes)
+        :좌석 최종 배정;
+    else (No)
+        :임시 예약 해제;
+    endif
+else (No)
+    :예약 불가능;
+endif
+stop
+@enduml

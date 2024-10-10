@@ -1,0 +1,18 @@
+@startuml
+actor User
+User -> ReservationController: 좌석 예약 요청
+ReservationController -> ReservationFacade: 좌석 예약 처리 요청
+ReservationFacade -> UserReader: 유저 존재 확인
+UserReader -> UserRepository: 유저 정보 DB에서 조회
+
+ReservationFacade -> SeatService: 좌석 예약 가능 여부 확인
+SeatService -> SeatRepository: 좌석 상태 확인
+SeatRepository -> SeatService: 좌석 예약 가능 상태 반환
+
+ReservationFacade -> SeatService: 좌석 임시 배정
+SeatService -> SeatRepository: 좌석 임시 예약 상태 저장
+
+ReservationFacade -> ReservationRepository: 예약 정보 저장
+ReservationFacade -> ReservationController: 좌석 예약 성공 응답
+ReservationController -> User: 좌석 예약 성공
+@enduml
