@@ -103,3 +103,77 @@
 
 ### 3. 잔액 충전 플로우 차트
 ![잔액 충전 플로우 차트](./document/flowchart/balance_charge_flow.png)
+
+
+---
+
+## ERD 설계
+
+### 1. **User (유저)**
+
+| Column        | Type    | Description                  |
+|---------------|---------|------------------------------|
+| id            | Long    | Primary Key, 유저 ID          |
+| name          | String  | 유저 이름                     |
+| email         | String  | 유저 이메일                   |
+| balance       | Double  | 유저 잔액                     |
+| token         | String  | 대기열 토큰                   |
+
+### 2. **Reservation (좌석 예약)**
+
+| Column         | Type     | Description                           |
+|----------------|----------|---------------------------------------|
+| id             | Long     | Primary Key, 예약 ID                   |
+| user_id        | Long     | 유저 ID (Foreign Key)                 |
+| seat_number    | Integer  | 좌석 번호 (1~50)                     |
+| reservation_date | Date   | 예약 날짜                             |
+| status         | String   | 예약 상태 (예: 'reserved', 'pending') |
+| expiration_time | Timestamp| 예약 만료 시간                        |
+
+### 3. **Payment (결제)**
+
+| Column        | Type     | Description                        |
+|---------------|----------|------------------------------------|
+| id            | Long     | Primary Key, 결제 ID                |
+| user_id       | Long     | 유저 ID (Foreign Key)              |
+| reservation_id| Long     | 예약 ID (Foreign Key)              |
+| amount        | Double   | 결제 금액                          |
+| payment_date  | DateTime | 결제 날짜                          |
+| status        | String   | 결제 상태 (예: 'completed', 'failed') |
+
+---
+
+## ERD 다이어그램
+
+```mermaid
+erDiagram
+    User ||--o{ Reservation : "has"
+    Reservation ||--|| Payment : "is paid by"
+    
+    User {
+        Long id
+        String name
+        String email
+        Double balance
+        String token
+    }
+    
+    Reservation {
+        Long id
+        Long user_id
+        Integer seat_number
+        Date reservation_date
+        String status
+        Timestamp expiration_time
+    }
+    
+    Payment {
+        Long id
+        Long user_id
+        Long reservation_id
+        Double amount
+        DateTime payment_date
+        String status
+    }
+
+```
