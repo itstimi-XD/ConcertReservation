@@ -1,7 +1,7 @@
 package io.hhplus.concertreservationservice.interfaces.dto
 
 data class ReservationRequest(
-    val userId: Long,      // 유저 ID
-    val date: String,      // 예약 날짜
-    val seatNumber: Int    // 예약할 좌석 번호
+    val userToken: String,
+    val seatNumber: Int,
+    val reservationDate: String  // 예약할 날짜 (yyyy-MM-dd 형식)
 )

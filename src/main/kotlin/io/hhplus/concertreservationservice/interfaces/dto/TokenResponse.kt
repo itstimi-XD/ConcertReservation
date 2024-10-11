@@ -1,6 +1,7 @@
 package io.hhplus.concertreservationservice.interfaces.dto
 
 data class TokenResponse(
-    val token: String,   // 발급된 토큰
-    val expirationTime: Long // 토큰 만료 시간
+    val token: String,
+    val queuePosition: Int,    // 대기열 순서
+    val estimatedWaitTime: Int  // 대기 예상 시간 (초 단위)
 )
