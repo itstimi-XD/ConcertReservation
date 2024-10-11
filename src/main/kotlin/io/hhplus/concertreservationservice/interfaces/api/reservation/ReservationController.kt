@@ -1,11 +1,10 @@
 package io.hhplus.concertreservationservice.interfaces.api.reservation
 
+import io.hhplus.concertreservationservice.interfaces.dto.ApiResponse
+import io.hhplus.concertreservationservice.interfaces.dto.ReservationRequest
 import io.hhplus.concertreservationservice.interfaces.dto.SeatAvailabilityResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
@@ -33,5 +32,12 @@ class ReservationController {
             availableSeats = listOf(1, 2, 3, 4, 5)
         )
         return ResponseEntity.ok(mockSeats)
+    }
+
+    @PostMapping("/reserve")
+    fun reserveSeat(@RequestBody request: ReservationRequest): ResponseEntity<ApiResponse> {
+        // TODO : 좌석 예약 로직 구현
+        // 더미 응답 반환
+        return ResponseEntity.ok(ApiResponse("Seat reserved successfully"))
     }
 }
