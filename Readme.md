@@ -176,6 +176,9 @@ http://localhost:8080/concert-reservation-swagger/
   }
   ```
 - **Description**: 사용자가 대기열에 진입하여 토큰을 발급받는 API. 토큰은 유저의 대기 순서와 예상 대기 시간을 포함.
+- **Error**:
+- `500 Internal Server Error`: `대기열 시스템 오류`
+- **Authorization**: 없음(초기 토큰 발급이므로 필요없음)
 
 ---
 
@@ -190,6 +193,9 @@ http://localhost:8080/concert-reservation-swagger/
   }
   ```
 - **Description**: 예약 가능한 날짜 목록을 반환.
+- **Error**:
+- `500 Internal Server Error`: `예약 가능한 날짜를 가져올 수 없어요~`
+- **Authorization**: 없음
 
 ---
 
@@ -209,7 +215,10 @@ http://localhost:8080/concert-reservation-swagger/
   }
   ```
 - **Description**: 특정 날짜에 예약 가능한 좌석 정보를 반환.
-
+- - **Error**:
+- `400 Bad Request`: `날짜 정보가 없거나 불가능해요.`
+- `500 Internal Server Error`: `좌석 정보를 가져올 수 없어요.`
+- **Authorization**: `Bearer {token}` (발급된 토큰이 필요)
 ---
 
 #### **4. 좌석 예약 요청 API**
@@ -231,7 +240,12 @@ http://localhost:8080/concert-reservation-swagger/
   }
   ```
 - **Description**: 사용자가 좌석을 예약하고, 일정 시간 동안 임시로 해당 좌석을 예약 상태로 유지하는 API.
-
+- **Error**:
+    - `400 Bad Request`: `잘못된 좌석 번호이거나 날짜가 입력되었어요.`
+    - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
+    - `409 Conflict`: `이선좌... 이미 예약된 좌석이에요.`
+    - `500 Internal Server Error`: `예약 시스템이 아파요.`
+- **Authorization**: `Bearer {token}`
 ---
 
 #### **5. 잔액 충전 API**
@@ -251,7 +265,11 @@ http://localhost:8080/concert-reservation-swagger/
   }
   ```
 - **Description**: 사용자의 잔액을 충전하는 API.
-
+- **Error**:
+    - `400 Bad Request`: `불가능한 양이에요.`
+    - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
+    - `500 Internal Server Error`: `충전 시스템이 아파요.`
+- **Authorization**: `Bearer {token}`
 ---
 
 #### **6. 잔액 조회 API**
@@ -269,7 +287,10 @@ http://localhost:8080/concert-reservation-swagger/
   }
   ```
 - **Description**: 사용자의 현재 잔액을 조회하는 API.
-
+- **Error**:
+    - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
+    - `500 Internal Server Error`: `잔액을 가져오는데 실패했어요.`
+- **Authorization**: `Bearer {token}`
 ---
 
 #### **7. 결제 API**
@@ -290,7 +311,12 @@ http://localhost:8080/concert-reservation-swagger/
   }
   ```
 - **Description**: 예약된 좌석에 대해 결제를 처리하는 API.
-
+- **Error**:
+    - `400 Bad Request`: `잘못된 결제 정보에요.`
+    - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
+    - `409 Conflict`: `에엥 돈을 더 내시려고요? 이미 결제되었어요~!`
+    - `500 Internal Server Error`: `결제 시스템이 아파요.`
+- **Authorization**: `Bearer {token}`
 ---
 
 ### 기술 스택 및 기본 패키지 구조
