@@ -1,0 +1,14 @@
+@startuml
+start
+:유저 잔액 충전 요청;
+:유저 정보 확인;
+if (유저가 존재하는가?) then (Yes)
+    :잔액 충전;
+    :충전된 금액 저장;
+    :잔액 충전 성공 응답;
+else (No)
+    :유저 정보 없음;
+    stop
+endif
+stop
+@enduml
