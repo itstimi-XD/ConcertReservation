@@ -194,8 +194,15 @@ erDiagram
 
 ## API 명세
 
-SWAGGER로도 API 명세를 작성하였습니다. 아래 링크를 통해 확인할 수 있습니다.(단,, 로컬 환경에서만 확인 가능합니다.)
-http://localhost:8080/concert-reservation-swagger/
+### API SWAGGER
+- 링크 : http://localhost:8080/concert-reservation-swagger/  (로컬 환경에서 확인 가능)
+
+### 캡쳐본 1
+![스웨거 캡쳐본 1](./document/swagger/swagger_thumbnail.png)
+
+### 캡쳐본 2
+![스웨거 캡쳐본 2](./document/swagger/user_balance.png)
+
 
 ### API 명세 및 Mock API 작성
 
