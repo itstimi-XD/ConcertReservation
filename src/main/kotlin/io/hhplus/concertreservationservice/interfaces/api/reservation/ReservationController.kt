@@ -3,6 +3,7 @@ package io.hhplus.concertreservationservice.interfaces.api.reservation
 import io.hhplus.concertreservationservice.interfaces.dto.ApiResponse
 import io.hhplus.concertreservationservice.interfaces.dto.ReservationRequest
 import io.hhplus.concertreservationservice.interfaces.dto.SeatAvailabilityResponse
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -11,6 +12,7 @@ import java.time.LocalDate
 @RequestMapping("/api/reservations")
 class ReservationController {
 
+    @Operation(summary = "예약 가능한 날짜 목록 조회", description = "예약 가능한 날짜 목록 조회 API")
     @GetMapping("/available-dates")
     fun getAvailableDates(): ResponseEntity<List<LocalDate>>{
         // TODO : 예약 가능한 날짜 목록 조회 로직 구현
@@ -23,6 +25,7 @@ class ReservationController {
         return ResponseEntity.ok(mockDates)
     }
 
+    @Operation(summary = "예약 가능한 좌석 목록 조회", description = "예약 가능한 좌석 목록 조회 API")
     @GetMapping("/available-seats")
     fun getAvailableSeats(@RequestParam date: LocalDate): ResponseEntity<SeatAvailabilityResponse>{
         // TODO : 예약 가능한 좌석 목록 조회 로직 구현
@@ -34,6 +37,7 @@ class ReservationController {
         return ResponseEntity.ok(mockSeats)
     }
 
+    @Operation(summary = "좌석 예약", description = "좌석 예약 API")
     @PostMapping("/reserve")
     fun reserveSeat(@RequestBody request: ReservationRequest): ResponseEntity<ApiResponse> {
         // TODO : 좌석 예약 로직 구현
