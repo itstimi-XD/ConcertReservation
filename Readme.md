@@ -116,6 +116,26 @@
 | payment_date  | DateTime | 결제 날짜                          |
 | status        | String   | 결제 상태 (예: 'completed', 'failed') |
 
+### 4. **Queue (대기열)**
+
+| Column         | Type     | Description                           |
+|----------------|----------|---------------------------------------|
+| id             | Long     | Primary Key, 대기열 ID                 |
+| user_id        | Long     | 유저 ID (Foreign Key)                 |
+| queue_position | Integer  | 대기열 순서                           |
+| created_at     | Timestamp| 대기열 생성 시간                      |
+| status         | String   | 대기열 상태 (예: 'waiting', 'completed') |
+
+
+### 5. **Concert (콘서트 정보)**
+
+| Column         | Type     | Description                           |
+|----------------|----------|---------------------------------------|
+| id             | Long     | Primary Key, 콘서트 ID                 |
+| title          | String   | 콘서트 제목                           |
+| concert_date   | Date     | 콘서트 날짜                           |
+| available_seats| Integer  | 콘서트 남은 좌석 수                    |
+
 ---
 
 ## ERD 다이어그램
@@ -124,6 +144,8 @@
 erDiagram
     User ||--o{ Reservation : "has"
     Reservation ||--|| Payment : "is paid by"
+    User ||--o{ Queue : "waits in"
+    Concert ||--o{ Reservation : "includes"
     
     User {
         Long id
@@ -151,6 +173,20 @@ erDiagram
         String status
     }
 
+    Queue {
+            Long id
+            Long user_id
+            Integer queue_position
+            Timestamp created_at
+            String status
+    }
+    
+    Concert {
+        Long id
+        String title
+        Date concert_date
+        Integer available_seats
+    }
 ```
 
 
