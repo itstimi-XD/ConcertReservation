@@ -21,6 +21,17 @@ class UserController {
         )
         return ResponseEntity.ok(mockResponse)
     }
+    
+    @GetMapping("/{userToken}/queue-status")
+    fun getQueueStatus(@PathVariable userToken: String): ResponseEntity<TokenResponse> {
+        // TODO: 대기열 상태 조회 로직 구현
+        val mockQueueResponse = TokenResponse(
+            token = userToken,
+            queuePosition = 1,  // 대기열 순서
+            estimatedWaitTime = 30  // 대기 예상 시간 (초 단위)
+        )
+        return ResponseEntity.ok(mockQueueResponse)
+    }
 
     @GetMapping("/{userToken}/balance")
     fun getBalance(@PathVariable userToken: String): ResponseEntity<ApiResponse> {
