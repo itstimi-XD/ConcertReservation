@@ -1,0 +1,11 @@
+@startuml
+actor User
+entity QueueSystem
+
+User -> QueueSystem : 대기열 진입 요청
+QueueSystem -> QueueSystem : 대기열에 사용자 추가
+QueueSystem -> QueueSystem : 대기열 순서 배정
+QueueSystem -> User : 대기열 토큰 발급 및 순서 전달
+User -> QueueSystem : 대기 순서 및 예상 대기 시간 확인
+QueueSystem -> User : 현재 대기 순서 및 남은 시간 반환
+@enduml
