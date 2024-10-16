@@ -37,7 +37,7 @@ class QueueService(
 
     fun processNextInQueue() {
         // 줄에서 맨 앞에 서있는 사용자 선택
-        val nextEntry = queueRepository.findTopByOrderByQueuePositionAsc("waiting") ?: return
+        val nextEntry = queueRepository.findTopByStatusOrderByQueuePositionAsc("waiting") ?: return
 
         // 상태 변경
         nextEntry.status = "completed"
@@ -48,5 +48,12 @@ class QueueService(
         // 대기 순번에 따른 예상 대기 시간 계산
         return queuePosition * WAIT_TIME_PER_PERSON
     }
+
+//    fun removeExpiredEntries(expirationTime: LocalDateTime) {
+//        val expiredEntries = queueRepository.findAllByStatusAndUpdatedAtBefore("completed", expirationTime)
+//        expiredEntries.forEach { entry ->
+//            queueRepository.delete(entry)
+//        }
+//    }
 
 }
