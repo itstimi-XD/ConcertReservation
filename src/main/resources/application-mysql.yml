@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db.bluebrewlab.com:3306/dbkimjusubbl
+    username: kimjusubbl
+    password: k5803jskim*
+
+  # JPA 설정
+  jpa:
+    database-platform: org.hibernate.dialect.mysql.MySQL5Dialect
+    hibernate:
+      ddl-auto: update      # 개발 단계에서는 'update'나 'create', 운영 단계에서는 'none'이나 'validate'를 사용
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
