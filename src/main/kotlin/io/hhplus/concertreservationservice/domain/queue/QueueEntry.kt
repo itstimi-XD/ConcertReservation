@@ -1,24 +1,24 @@
 package io.hhplus.concertreservationservice.domain.queue
 
+import io.hhplus.concertreservationservice.domain.common.Auditable
 import jakarta.persistence.*
-import java.time.LocalDateTime
-
 
 @Entity
+@EntityListeners(Auditable::class)
 @Table(name = "queue_entries")
 data class QueueEntry(
     @Id
-    val token: String,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     val userId: Long,
 
-    @Column(nullable = false)
-    val queuePosition: Long,
+    @Column(name = "queue_position", nullable = false)
+    val queuePosition: Int,
 
     @Column(nullable = false)
-    val issuedAt: LocalDateTime,
+    var status: String // "waiting", "pass"
 
-    @Column(nullable = false)
-    val estimatedWaitTime: Long // 초 단위
-)
+) : Auditable()
+
