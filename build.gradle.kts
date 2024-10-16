@@ -3,6 +3,8 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
+    id("org.jetbrains.kotlin.plugin.noarg") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.allopen") version "2.0.0"
 }
 
 group = "io.hhplus"
@@ -16,6 +18,22 @@ java {
 
 repositories {
     mavenCentral()
+}
+
+apply(plugin = "org.jetbrains.kotlin.plugin.noarg")
+
+noArg {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
+}
+
+apply(plugin = "org.jetbrains.kotlin.plugin.allopen")
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
 }
 
 dependencies {
