@@ -1,9 +1,15 @@
 package io.hhplus.concertreservationservice.queue
 
+import io.hhplus.concertreservationservice.domain.queue.QueueEntry
+import io.hhplus.concertreservationservice.domain.queue.QueueRepository
+import io.hhplus.concertreservationservice.domain.queue.QueueService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.time.LocalDateTime
 
 class QueueServiceTest {
@@ -21,10 +27,10 @@ class QueueServiceTest {
     fun `사용자가 대기열에 진입하면 대기열 토큰과 대기 순번이 발급된다`() {
         // Given
         val userId = 1L
-        Mockito.`when`(queueRepository.count()).thenReturn(0)
-        Mockito.`when`(queueRepository.save(Mockito.any(QueueEntry::class.java)))
+        whenever(queueRepository.count()).thenReturn(0)
+        whenever(queueRepository.save(any()))
             .thenAnswer { invocation ->
-                invocation.arguments[0] as QueryEntry
+                invocation.arguments[0]
             }
 
         // When
@@ -35,7 +41,7 @@ class QueueServiceTest {
         assertEquals(1, queueEntry.queuePosition)
         assertEquals(userId, queueEntry.userId)
     }
-
+    
     @Test
     fun `유효한 토큰으로 대기열 상태를 조회할 수 있다`() {
         // Given
@@ -54,7 +60,7 @@ class QueueServiceTest {
 
         // Then
         assertNotNull(result)
-        assertEquals(token, result.token)
+        assertEquals(token, result?.token)
     }
 
     @Test
