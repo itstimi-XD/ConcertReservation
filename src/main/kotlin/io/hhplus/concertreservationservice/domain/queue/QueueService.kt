@@ -16,6 +16,9 @@ class QueueService(
         const val WAIT_TIME_PER_PERSON = 60L
     }
 
+    fun isValidQueueToken(token: String): Boolean {
+        return queueRepository.findByQueueToken(token)?.status == "completed"
+    }
     fun registerUserInQueue(userId: Long, concertScheduleId: Long): QueueEntry {
         // 이미 대기열에 존재하는지 확인
         val existingEntry = queueRepository.findByUserIdAndStatus(userId, "waiting")
