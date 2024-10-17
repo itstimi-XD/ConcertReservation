@@ -71,4 +71,8 @@ class QueueRepositoryImpl(
     ): QueueEntry? {
         return jpaQueueRepository.findByUserIdAndConcertScheduleIdAndStatus(userId, concertScheduleId, status)
     }
+
+    override fun deleteByUserId(userId: Long) {
+        jpaQueueRepository.deleteByUserId(userId)
+    }
 }

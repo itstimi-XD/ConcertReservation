@@ -13,4 +13,11 @@ class SeatRepositoryImpl(
 
     override fun findByConcertScheduleIdAndSeatNumber(concertScheduleId: Long, seatNumber: Int) =
         jpaSeatRepository.findByConcertScheduleIdAndSeatNumber(concertScheduleId, seatNumber)
+
+    override fun save(seat: Seat): Seat {
+        return jpaSeatRepository.save(seat)
+    }
+    override fun findById(seatId: Long): Seat? {
+        return jpaSeatRepository.findById(seatId).orElse(null)
+    }
 }

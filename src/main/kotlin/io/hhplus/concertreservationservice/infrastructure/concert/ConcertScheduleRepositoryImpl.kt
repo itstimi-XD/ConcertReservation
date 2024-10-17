@@ -17,4 +17,8 @@ class ConcertScheduleRepositoryImpl(
     override fun findByAvailableDateAfter(availableDate: LocalDateTime): List<ConcertSchedule> {
         return jpaConcertScheduleRepository.findByAvailableDateAfter(availableDate)
     }
+
+    override fun findById(id: Long): ConcertSchedule? {
+        return jpaConcertScheduleRepository.findById(id).orElse(null)
+    }
 }

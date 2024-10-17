@@ -28,6 +28,8 @@ interface JpaQueueRepository : JpaRepository<QueueEntry, Long> {
         status: String
     ): Long
 
+    fun deleteByUserId(userId: Long)
+
     fun findByUserIdAndConcertScheduleIdAndStatus(
         userId: Long,
         concertScheduleId: Long,
