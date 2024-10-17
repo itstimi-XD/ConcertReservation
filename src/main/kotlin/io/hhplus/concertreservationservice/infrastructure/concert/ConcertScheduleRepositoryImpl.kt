@@ -4,6 +4,7 @@ import io.hhplus.concertreservationservice.domain.concert.ConcertSchedule
 import io.hhplus.concertreservationservice.domain.concert.ConcertScheduleRepository
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Component
 class ConcertScheduleRepositoryImpl(
@@ -12,5 +13,8 @@ class ConcertScheduleRepositoryImpl(
 
     override fun findAllByConcertDateAfter(date: LocalDate): List<ConcertSchedule> {
         return jpaConcertScheduleRepository.findAllByConcertDateAfter(date)
+    }
+    override fun findByAvailableDateAfter(availableDate: LocalDateTime): List<ConcertSchedule> {
+        return jpaConcertScheduleRepository.findByAvailableDateAfter(availableDate)
     }
 }

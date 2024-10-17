@@ -1,7 +1,9 @@
 package io.hhplus.concertreservationservice.domain.concert
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface ConcertScheduleRepository {
     fun findAllByConcertDateAfter(date: LocalDate): List<ConcertSchedule>
+    fun findByAvailableDateAfter(availableDate: LocalDateTime): List<ConcertSchedule>
 }
