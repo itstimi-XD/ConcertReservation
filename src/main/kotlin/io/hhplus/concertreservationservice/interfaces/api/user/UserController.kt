@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/users")
 class UserController {
 
-    @Operation(summary = "유저 토큰 발급", description = "대기열에서 유저 토큰을 발급받는 API")
-    @PostMapping("/token")
-    fun issueToken(): ResponseEntity<TokenResponse> {
-
-        // TODO : 토큰 발급 로직 구현
-        val mockResponse = TokenResponse(
-            token = "mocked-token-uuid",
-            queuePosition = 1,  // 대기열 순서
-            estimatedWaitTime = 60  // 대기 예상 시간 (초 단위)
-        )
-        return ResponseEntity.ok(mockResponse)
-    }
+//    @Operation(summary = "유저 토큰 발급", description = "대기열에서 유저 토큰을 발급받는 API")
+//    @PostMapping("/token")
+//    fun issueToken(): ResponseEntity<TokenResponse> {
+//
+//        // TODO : 토큰 발급 로직 구현
+//        val mockResponse = TokenResponse(
+//            token = "mocked-token-uuid",
+//            queuePosition = 1,  // 대기열 순서
+//            estimatedWaitTime = 60  // 대기 예상 시간 (초 단위)
+//        )
+//        return ResponseEntity.ok(mockResponse)
+//    }
 
     @Operation(summary = "대기열 상태 조회", description = "유저의 대기열 상태를 조회하는 API")
     @GetMapping("/{userToken}/queue-status")
