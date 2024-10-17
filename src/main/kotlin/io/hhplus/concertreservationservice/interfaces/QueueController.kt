@@ -14,7 +14,7 @@ class QueueController(
 
     @PostMapping("/register")
     fun registerInQueue(
-        @RequestHeader("Authorization") userToken: String,
+        @RequestHeader("User-Token") userToken: String,
         @RequestBody request: QueueRegistrationRequest
     ): ResponseEntity<QueueTokenResponse> {
         val response = queueFacade.registerInQueue(userToken, request)
@@ -22,7 +22,9 @@ class QueueController(
     }
 
     @GetMapping("/status")
-    fun getQueueStatus(@RequestParam queueToken: String): ResponseEntity<QueueTokenResponse> {
+    fun getQueueStatus(
+        @RequestHeader("Queue-Token") queueToken: String
+    ): ResponseEntity<QueueTokenResponse> {
         val response = queueFacade.getQueueStatus(queueToken)
         return ResponseEntity.ok(response)
     }
