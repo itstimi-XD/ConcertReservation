@@ -12,6 +12,7 @@ interface QueueRepository {
     fun findTopByStatusOrderByQueuePositionAsc(status: String): QueueEntry?
     fun countByStatus(status: String): Long
     fun findAllByStatusAndUpdatedAtBefore(status: String, updatedAt: LocalDateTime): List<QueueEntry>
+    fun deleteAll(entries: List<QueueEntry>)
 
     // 콘서트 스케줄별 메서드 추가
     fun findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(
@@ -20,7 +21,10 @@ interface QueueRepository {
         limit: Int
     ): List<QueueEntry>
 
-    fun countByConcertScheduleIdAndStatus(concertScheduleId: Long, status: String): Long
+    fun countByConcertScheduleIdAndStatus(
+        concertScheduleId: Long,
+        status: String
+    ): Long
 
     fun findByUserIdAndConcertScheduleIdAndStatus(
         userId: Long,

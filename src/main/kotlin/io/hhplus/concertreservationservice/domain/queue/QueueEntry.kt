@@ -16,6 +16,9 @@ data class QueueEntry(
     @Column(name = "queue_token", nullable = false)
     val queueToken: String,
 
+    @Column(name = "concert_schedule_id", nullable = false)
+    val concertScheduleId: Long,
+
     @Column(name = "queue_position", nullable = false)
     val queuePosition: Int,
 

@@ -1,6 +1,7 @@
 package io.hhplus.concertreservationservice.interfaces
 
 import io.hhplus.concertreservationservice.application.queue.QueueFacade
+import io.hhplus.concertreservationservice.interfaces.dto.QueueRegistrationRequest
 import io.hhplus.concertreservationservice.interfaces.dto.QueueTokenResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,8 +13,11 @@ class QueueController(
 ) {
 
     @PostMapping("/register")
-    fun registerInQueue(@RequestHeader("Authorization") userToken: String): ResponseEntity<QueueTokenResponse> {
-        val response = queueFacade.registerInQueue(userToken)
+    fun registerInQueue(
+        @RequestHeader("Authorization") userToken: String,
+        @RequestBody request: QueueRegistrationRequest
+    ): ResponseEntity<QueueTokenResponse> {
+        val response = queueFacade.registerInQueue(userToken, request)
         return ResponseEntity.ok(response)
     }
 
