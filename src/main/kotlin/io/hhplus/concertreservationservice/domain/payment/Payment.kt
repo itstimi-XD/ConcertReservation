@@ -12,18 +12,14 @@ data class Payment(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    val userId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", nullable = false)
-    val reservation: Reservation,
+    val reservationId: Long,
 
     @Column(nullable = false)
     val amount: Double,
 
-    @Column(name = "payment_date", nullable = false)
+    @Column(name = "payment_date", nullable = false, columnDefinition = "TIMESTAMP")
     val paymentDate: LocalDateTime = LocalDateTime.now(),
 
     @Column(nullable = false)

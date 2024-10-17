@@ -1,35 +1,33 @@
 package io.hhplus.concertreservationservice.domain.reservation
 
-import io.hhplus.concertreservationservice.domain.common.Auditable
 import io.hhplus.concertreservationservice.domain.concert.ConcertSchedule
 import io.hhplus.concertreservationservice.domain.user.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@EntityListeners(Auditable::class)
 @Table(name = "reservations")
 data class Reservation(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    val userId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concert_schedule_id", nullable = false)
-    val concertSchedule: ConcertSchedule,
+    val concertScheduleId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seat_id", nullable = false)
-    val seat: Seat,
+    val seatId: Long,
 
     @Column(nullable = false)
     var status: String, // "pending", "reserved", "expired"
 
-    @Column(name = "expiration_time", nullable = false)
-    val expirationTime: LocalDateTime
+    @Column(name = "expiration_time", nullable = false, columnDefinition = "TIMESTAMP")
+    val expirationTime: LocalDateTime,
 
-) : Auditable()
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
+    var updatedAt: LocalDateTime = LocalDateTime.now()
+
+)

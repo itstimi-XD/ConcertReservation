@@ -12,14 +12,12 @@ data class BalanceHistory(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    val userId: Long,
 
     @Column(nullable = false)
     val amount: Double,
 
-    @Column(name = "transaction_date", nullable = false)
+    @Column(name = "transaction_date", nullable = false, columnDefinition = "TIMESTAMP")
     val transactionDate: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "transaction_type", nullable = false)

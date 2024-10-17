@@ -7,9 +7,8 @@ spring:
 
   # JPA 설정
   jpa:
-    database-platform: org.hibernate.dialect.mysql.MySQL5Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect  # Updated dialect
     hibernate:
       ddl-auto: update      # 개발 단계에서는 'update'나 'create', 운영 단계에서는 'none'이나 'validate'를 사용
     properties:
       hibernate.format_sql: true
-      dialect: org.hibernate.dialect.MySQL8InnoDBDialect

@@ -1,11 +1,9 @@
 package io.hhplus.concertreservationservice.domain.user
 
-import io.hhplus.concertreservationservice.domain.common.Auditable
 import jakarta.persistence.*
 
 @Entity
-@EntityListeners(Auditable::class)
-@Table(name = "users")
+@Table(name = "users", schema = "concert_reservation")
 data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +17,4 @@ data class User(
 
     @Column(nullable = false)
     var balance: Double = 0.0
-): Auditable()
+)

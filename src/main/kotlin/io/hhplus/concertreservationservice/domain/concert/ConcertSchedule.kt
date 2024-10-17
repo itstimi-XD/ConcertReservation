@@ -11,11 +11,9 @@ data class ConcertSchedule(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concert_id", nullable = false)
-    val concert: Concert,
+    val concertId: Long,
 
-    @Column(name = "concert_date", nullable = false)
+    @Column(name = "concert_date", nullable = false, columnDefinition = "DATE")
     val concertDate: LocalDate,
 
     @Column(name = "total_seats", nullable = false)
