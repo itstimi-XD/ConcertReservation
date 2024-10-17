@@ -9,6 +9,14 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect  # Updated dialect
     hibernate:
-      ddl-auto: update      # 개발 단계에서는 'update'나 'create', 운영 단계에서는 'none'이나 'validate'를 사용
+      ddl-auto: update
     properties:
       hibernate.format_sql: true
+
+scheduler:
+  queueProcess:
+    fixedRate: 60000 # 1분마다 실행 (밀리초 단위)
+    passLimit: 30
+  queueCleanup:
+    fixedRate: 30000 # 30초마다 실행 (밀리초 단위)
+    expirationMinutes: 10

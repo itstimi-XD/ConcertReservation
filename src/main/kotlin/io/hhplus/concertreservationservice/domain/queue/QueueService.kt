@@ -1,17 +1,22 @@
 package io.hhplus.concertreservationservice.domain.queue
 
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class QueueService(
-    private val queueRepository: QueueRepository
+    private val queueRepository: QueueRepository,
+    @Value("\${scheduler.queueProcess.passLimit}") private val passLimit: Int,
+    @Value("\${scheduler.queueCleanup.expirationMinutes}") private val expirationMinutes: Long
 ) {
+    companion object {
+        const val WAIT_TIME_PER_PERSON = 60L
+    }
 
-    val WAIT_TIME_PER_PERSON = 60L
-
-    fun registerUserInQueue(userId: Long): QueueEntry {
+    fun registerUserInQueue(userId: Long, concertScheduleId: Long): QueueEntry {
         // 이미 대기열에 존재하는지 확인
         val existingEntry = queueRepository.findByUserIdAndStatus(userId, "waiting")
         existingEntry?.let {
@@ -25,16 +30,13 @@ class QueueService(
         val queueEntry = QueueEntry(
             userId = userId,
             queueToken = UUID.randomUUID().toString(),
+            concertScheduleId = concertScheduleId,
             queuePosition = queuePosition,
             status = "waiting"
         )
 
         return queueRepository.save(queueEntry)
     }
-//
-//    fun getQueueStatus(userId: Long): QueueEntry? {
-//        return queueRepository.findByUserIdAndStatus(userId, "waiting")
-//    }
 
     fun getQueueStatus(queueToken: String): QueueEntry? {
         return queueRepository.findByQueueToken(queueToken)
@@ -54,11 +56,23 @@ class QueueService(
         return queuePosition * WAIT_TIME_PER_PERSON
     }
 
-//    fun removeExpiredEntries(expirationTime: LocalDateTime) {
-//        val expiredEntries = queueRepository.findAllByStatusAndUpdatedAtBefore("completed", expirationTime)
-//        expiredEntries.forEach { entry ->
-//            queueRepository.delete(entry)
-//        }
-//    }
+    fun processNextUsersByConcertSchedule(concertScheduleId: Long) {
+        val pageable = PageRequest.of(0, passLimit)
+        val waitingUsers = queueRepository.findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(
+            concertScheduleId,
+            "waiting",
+            passLimit
+        )
+        waitingUsers.forEach { queueEntry ->
+            queueEntry.status = "completed"
+            queueEntry.updatedAt = LocalDateTime.now()
+            queueRepository.save(queueEntry)
+        }
+    }
 
+    fun removeExpiredEntries() {
+        val expirationTime = LocalDateTime.now().minusMinutes(expirationMinutes)
+        val expiredEntries = queueRepository.findAllByStatusAndUpdatedAtBefore("completed", expirationTime)
+        queueRepository.deleteAll(expiredEntries)
+    }
 }

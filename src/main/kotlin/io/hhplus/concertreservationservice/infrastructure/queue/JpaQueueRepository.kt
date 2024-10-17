@@ -15,7 +15,7 @@ interface JpaQueueRepository : JpaRepository<QueueEntry, Long> {
     fun findTopByStatusOrderByQueuePositionAsc(status: String): QueueEntry?
     fun countByStatus(status: String): Long
     fun findAllByStatusAndUpdatedAtBefore(status: String, updatedAt: LocalDateTime): List<QueueEntry>
-
+    fun deleteAll(entries: List<QueueEntry>)
     // 콘서트 스케줄별 메서드 추가
     @Query("SELECT q FROM QueueEntry q WHERE q.concertScheduleId = :concertScheduleId AND q.status = :status ORDER BY q.queuePosition ASC")
     fun findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(
@@ -24,7 +24,10 @@ interface JpaQueueRepository : JpaRepository<QueueEntry, Long> {
         pageable: Pageable
     ): List<QueueEntry>
 
-    fun countByConcertScheduleIdAndStatus(concertScheduleId: Long, status: String): Long
+    fun countByConcertScheduleIdAndStatus(
+        concertScheduleId: Long,
+        status: String
+    ): Long
 
     fun findByUserIdAndConcertScheduleIdAndStatus(
         userId: Long,

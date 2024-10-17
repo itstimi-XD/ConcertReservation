@@ -11,6 +11,10 @@ class QueueRepositoryImpl(
     private val jpaQueueRepository: JpaQueueRepository
 ) : QueueRepository {
 
+    override fun deleteAll(entries: List<QueueEntry>) {
+        return jpaQueueRepository.deleteAll(entries)
+    }
+
     override fun findByQueueToken(queueToken: String): QueueEntry? {
         return jpaQueueRepository.findByQueueToken(queueToken)
     }
