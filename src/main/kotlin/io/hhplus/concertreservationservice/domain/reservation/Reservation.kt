@@ -1,7 +1,5 @@
 package io.hhplus.concertreservationservice.domain.reservation
 
-import io.hhplus.concertreservationservice.domain.concert.ConcertSchedule
-import io.hhplus.concertreservationservice.domain.user.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
 

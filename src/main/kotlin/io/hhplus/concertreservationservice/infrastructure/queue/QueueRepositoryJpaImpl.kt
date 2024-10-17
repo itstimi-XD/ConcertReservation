@@ -9,6 +9,7 @@ import java.util.*
 
 @Repository
 interface QueueRepositoryJpaImpl : QueueRepository, JpaRepository<QueueEntry, Long> {
+    override fun findByQueueToken(queueToken: String): QueueEntry?
 
     override fun save(queueEntry: QueueEntry): QueueEntry
 

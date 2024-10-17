@@ -14,8 +14,8 @@ class QueueService(
     fun registerUserInQueue(userId: Long): QueueEntry {
         // 이미 대기열에 존재하는지 확인
         val existingEntry = queueRepository.findByUserIdAndStatus(userId, "waiting")
-        if (existingEntry != null) {
-            return existingEntry
+        existingEntry?.let {
+            return it
         }
 
         // 대기열 순번 계산
@@ -24,15 +24,20 @@ class QueueService(
         // QueueEntry 생성
         val queueEntry = QueueEntry(
             userId = userId,
+            queueToken = UUID.randomUUID().toString(),
             queuePosition = queuePosition,
             status = "waiting"
         )
 
         return queueRepository.save(queueEntry)
     }
+//
+//    fun getQueueStatus(userId: Long): QueueEntry? {
+//        return queueRepository.findByUserIdAndStatus(userId, "waiting")
+//    }
 
-    fun getQueueStatus(userId: Long): QueueEntry? {
-        return queueRepository.findByUserIdAndStatus(userId, "waiting")
+    fun getQueueStatus(queueToken: String): QueueEntry? {
+        return queueRepository.findByQueueToken(queueToken)
     }
 
     fun processNextInQueue() {

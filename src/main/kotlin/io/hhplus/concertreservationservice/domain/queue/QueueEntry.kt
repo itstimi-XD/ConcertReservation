@@ -13,6 +13,9 @@ data class QueueEntry(
     @Column(name = "user_id", nullable = false)
     val userId: Long,
 
+    @Column(name = "queue_token", nullable = false)
+    val queueToken: String,
+
     @Column(name = "queue_position", nullable = false)
     val queuePosition: Int,
 

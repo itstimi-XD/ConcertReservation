@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 interface QueueRepository {
+    fun findByQueueToken(queueToken: String): QueueEntry?
     fun save(queueEntry: QueueEntry): QueueEntry
     fun findById(id: Long): Optional<QueueEntry>
     fun findByUserIdAndStatus(userId: Long, status: String): QueueEntry?
