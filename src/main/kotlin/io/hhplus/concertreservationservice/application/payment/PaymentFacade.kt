@@ -1,7 +1,9 @@
 package io.hhplus.concertreservationservice.application.payment
 
+import io.hhplus.concertreservationservice.domain.payment.PaymentService
 import io.hhplus.concertreservationservice.interfaces.common.AuthUtil
 import io.hhplus.concertreservationservice.interfaces.dto.PaymentRequest
+import io.hhplus.concertreservationservice.interfaces.dto.PaymentResponse
 import org.springframework.stereotype.Service
 
 @Service

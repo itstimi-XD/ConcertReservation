@@ -1,7 +1,5 @@
 package io.hhplus.concertreservationservice.domain.payment
 
-import io.hhplus.concertreservationservice.domain.reservation.Reservation
-import io.hhplus.concertreservationservice.domain.user.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -12,16 +10,21 @@ data class Payment(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
+    @Column(name = "user_id", nullable = false)
     val userId: Long,
 
+    @Column(name = "reservation_id", nullable = false)
     val reservationId: Long,
 
     @Column(nullable = false)
-    val amount: Double,
-
-    @Column(name = "payment_date", nullable = false, columnDefinition = "TIMESTAMP")
-    val paymentDate: LocalDateTime = LocalDateTime.now(),
+    val amount: Int,
 
     @Column(nullable = false)
-    var status: String // "completed", "failed"
+    val status: String, // "completed"
+
+    @Column(name = "created_at", nullable = false)
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: LocalDateTime = LocalDateTime.now()
 )
