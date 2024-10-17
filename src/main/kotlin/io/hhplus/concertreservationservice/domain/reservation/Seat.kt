@@ -28,6 +28,10 @@ data class Seat(
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "updated_at", nullable = false)
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    var updatedAt: LocalDateTime = LocalDateTime.now(),
+
+    @Version // 낙관적 락을 위한 버전 필드
+    @Column(name = "version")
+    var version: Long = 0
 )
 

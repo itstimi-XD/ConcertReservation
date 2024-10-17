@@ -9,4 +9,7 @@ class SeatRepositoryImpl(
 ) : SeatRepository {
     override fun findByConcertScheduleIdAndSeatStatus(concertScheduleId: Long, seatStatus: String) =
         jpaSeatRepository.findByConcertScheduleIdAndSeatStatus(concertScheduleId, seatStatus)
+
+    override fun findByConcertScheduleIdAndSeatNumber(concertScheduleId: Long, seatNumber: Int) =
+        jpaSeatRepository.findByConcertScheduleIdAndSeatNumber(concertScheduleId, seatNumber)
 }

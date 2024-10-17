@@ -12,7 +12,7 @@ class QueueFacade(
     private val queueService: QueueService
 ) {
 
-    fun registerInQueue(userToken: String, request:QueueRegistrationRequest): QueueTokenResponse {
+    fun registerInQueue(userToken: String, request: QueueRegistrationRequest): QueueTokenResponse {
         val userId = userService.getUserIdFromToken(userToken)
         val concertScheduleId = request.concertScheduleId
         val queueEntry = queueService.registerUserInQueue(userId, concertScheduleId)

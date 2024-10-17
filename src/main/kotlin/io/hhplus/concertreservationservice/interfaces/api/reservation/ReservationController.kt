@@ -37,9 +37,12 @@ class ReservationController(
 
     @Operation(summary = "좌석 예약", description = "좌석 예약 API")
     @PostMapping("/reserve")
-    fun reserveSeat(@RequestBody request: ReservationRequest): ResponseEntity<ApiResponse> {
-        // TODO : 좌석 예약 로직 구현
-        // 더미 응답 반환
-        return ResponseEntity.ok(ApiResponse("Seat reserved successfully"))
+    fun reserveSeat(
+        @RequestHeader("User-Token") userToken: String,
+        @RequestHeader("Queue-Token") queueToken: String,
+        @RequestBody request: ReservationRequest
+    ): ResponseEntity<ReservationResponse> {
+        val response = concertFacade.reserveSeat(userToken, queueToken, request)
+        return ResponseEntity.ok(response)
     }
 }
