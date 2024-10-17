@@ -30,8 +30,7 @@ class ReservationCleanupScheduler(
             queueRepository.deleteByUserId(reservation.userId)
 
             // 2) 좌석 점유 해제
-            val seat = seatRepository.findById(reservation.seatId).orElse(null)
-            seat?.let {
+            seatRepository.findById(reservation.seatId)?.let {
                 it.seatStatus = "available"
                 it.userId = null
                 seatRepository.save(it)

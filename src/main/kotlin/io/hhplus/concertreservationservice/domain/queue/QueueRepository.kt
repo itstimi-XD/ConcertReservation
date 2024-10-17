@@ -31,4 +31,6 @@ interface QueueRepository {
         concertScheduleId: Long,
         status: String
     ): QueueEntry?
+
+    fun deleteByUserId(userId: Long)
 }

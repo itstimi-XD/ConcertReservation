@@ -1,5 +1,6 @@
 package io.hhplus.concertreservationservice.infrastructure.reservation
 
+import io.hhplus.concertreservationservice.domain.reservation.Seat
 import io.hhplus.concertreservationservice.domain.reservation.SeatRepository
 import org.springframework.stereotype.Component
 
