@@ -22,8 +22,6 @@
 
 ---
 
-목차는 이렇게 각 섹션에 링크를 추가하여 작성하면 사용자가 쉽게 해당 항목으로 이동할 수 있습니다. 이를 통해 가독성을 높일 수 있습니다.
-
 ## 프로젝트 개요
 **콘서트 예약 서비스**는 유저가 대기열을 통해 좌석을 예약하고 결제를 완료하는 시스템입니다. 사용자는 잔액을 충전하여 좌석을 예약하고, 대기열 시스템을 통해 예약 요청을 처리할 수 있습니다.
 
@@ -84,86 +82,34 @@
 
 ## ERD 설계
 
-### 1. **User (유저)**
-
-| Column        | Type    | Description                  |
-|---------------|---------|------------------------------|
-| id            | Long    | Primary Key, 유저 ID          |
-| name          | String  | 유저 이름                     |
-| email         | String  | 유저 이메일                   |
-| balance       | Double  | 유저 잔액                     |
-| token         | String  | 대기열 토큰                   |
-
-### 2. **Reservation (좌석 예약)**
-
-| Column         | Type     | Description                           |
-|----------------|----------|---------------------------------------|
-| id             | Long     | Primary Key, 예약 ID                   |
-| user_id        | Long     | 유저 ID (Foreign Key)                 |
-| seat_number    | Integer  | 좌석 번호 (1~50)                     |
-| reservation_date | Date   | 예약 날짜                             |
-| status         | String   | 예약 상태 (예: 'reserved', 'pending') |
-| expiration_time | Timestamp| 예약 만료 시간                        |
-
-### 3. **Payment (결제)**
-
-| Column        | Type     | Description                        |
-|---------------|----------|------------------------------------|
-| id            | Long     | Primary Key, 결제 ID                |
-| user_id       | Long     | 유저 ID (Foreign Key)              |
-| reservation_id| Long     | 예약 ID (Foreign Key)              |
-| amount        | Double   | 결제 금액                          |
-| payment_date  | DateTime | 결제 날짜                          |
-| status        | String   | 결제 상태 (예: 'completed', 'failed') |
-
-### 4. **Queue (대기열)**
-
-| Column         | Type     | Description                           |
-|----------------|----------|---------------------------------------|
-| id             | Long     | Primary Key, 대기열 ID                 |
-| user_id        | Long     | 유저 ID (Foreign Key)                 |
-| queue_position | Integer  | 대기열 순서                           |
-| created_at     | Timestamp| 대기열 생성 시간                      |
-| status         | String   | 대기열 상태 (예: 'waiting', 'completed') |
-
-
-### 5. **Concert (콘서트 정보)**
-
-| Column         | Type     | Description                           |
-|----------------|----------|---------------------------------------|
-| id             | Long     | Primary Key, 콘서트 ID                 |
-| title          | String   | 콘서트 제목                           |
-| concert_date   | Date     | 콘서트 날짜                           |
-| available_seats| Integer  | 콘서트 남은 좌석 수                    |
-
----
-
 ## ERD 다이어그램
 
 ```mermaid
 erDiagram
-    User ||--o{ Reservation : "has"
+    User ||--o{ Reservation : "makes"
     Reservation ||--|| Payment : "is paid by"
     User ||--o{ Queue : "waits in"
-    Concert ||--o{ Reservation : "includes"
-    
+    Concert_Schedule ||--o{ Reservation : "includes"
+    Concert_Schedule ||--o{ Seat : "has"
+    User ||--o{ Balance_History : "has"
+
     User {
         Long id
         String name
         String email
         Double balance
-        String token
     }
-    
+
     Reservation {
         Long id
         Long user_id
+        Long concert_schedule_id
         Integer seat_number
         Date reservation_date
         String status
         Timestamp expiration_time
     }
-    
+
     Payment {
         Long id
         Long user_id
@@ -174,244 +120,420 @@ erDiagram
     }
 
     Queue {
-            Long id
-            Long user_id
-            Integer queue_position
-            Timestamp created_at
-            String status
+        Long id
+        Long user_id
+        Integer queue_position
+        Timestamp created_at
+        String status
     }
-    
+
+    Concert_Schedule {
+        Long id
+        Long concert_id
+        Date concert_date
+        Integer total_seats
+    }
+
     Concert {
         Long id
         String title
-        Date concert_date
-        Integer available_seats
+        String description
     }
-```
 
+    Seat {
+        Long id
+        Long concert_schedule_id
+        Integer seat_number
+        String status
+    }
+
+    Balance_History {
+        Long id
+        Long user_id
+        Double amount
+        DateTime transaction_date
+        String transaction_type
+    }
+
+```
+### 테이블 설명
+
+1. **User (유저)**
+    - `id`: Primary Key, 유저 ID
+    - `name`: 유저 이름
+    - `email`: 유저 이메일
+    - `balance`: 유저 잔액
+2. **Concert (콘서트)**
+    - `id`: Primary Key, 콘서트 ID
+    - `title`: 콘서트 제목
+    - `description`: 콘서트 설명
+3. **Concert_Schedule (콘서트 일정)**
+    - `id`: Primary Key, 콘서트 일정 ID
+    - `concert_id`: Concert 테이블과의 Foreign Key
+    - `concert_date`: 콘서트 날짜
+    - `total_seats`: 총 좌석 수
+4. **Seat (좌석)**
+    - `id`: Primary Key, 좌석 ID
+    - `concert_schedule_id`: Concert_Schedule 테이블과의 Foreign Key
+    - `seat_number`: 좌석 번호
+    - `status`: 좌석 상태 (`available`, `pending`, `reserved` 등)
+5. **Reservation (좌석 예약)**
+    - `id`: Primary Key, 예약 ID
+    - `user_id`: User 테이블과의 Foreign Key
+    - `concert_schedule_id`: Concert_Schedule 테이블과의 Foreign Key
+    - `seat_number`: 좌석 번호
+    - `status`: 예약 상태 (`pending`, `reserved`, `expired` 등)
+    - `expiration_time`: 예약 만료 시간
+6. **Payment (결제)**
+    - `id`: Primary Key, 결제 ID
+    - `user_id`: User 테이블과의 Foreign Key
+    - `reservation_id`: Reservation 테이블과의 Foreign Key
+    - `amount`: 결제 금액
+    - `payment_date`: 결제 일시
+    - `status`: 결제 상태 (`completed`, `failed` 등)
+7. **Queue (대기열)**
+    - `id`: Primary Key, 대기열 ID
+    - `user_id`: User 테이블과의 Foreign Key
+    - `queue_position`: 대기열 순서
+    - `created_at`: 대기열 생성 시간
+    - `status`: 대기열 상태 (`waiting`, `completed` 등)
+8. **Balance_History (잔액 거래 내역)**
+    - `id`: Primary Key, 거래 내역 ID
+    - `user_id`: User 테이블과의 Foreign Key
+    - `amount`: 거래 금액
+    - `transaction_date`: 거래 일시
+    - `transaction_type`: 거래 유형 (`charge`, `payment` 등)
 
 ---
 
 ## API 명세
 
-SWAGGER로도 API 명세를 작성하였습니다. 아래 링크를 통해 확인할 수 있습니다.(단,, 로컬 환경에서만 확인 가능합니다.)
-http://localhost:8080/concert-reservation-swagger/
+### API SWAGGER
+- 링크 : http://localhost:8080/concert-reservation-swagger/  (로컬 환경에서 확인 가능)
 
+### 캡쳐본 1
+![스웨거 캡쳐본 1](./document/swagger/swagger_thumbnail.png)
+
+### 캡쳐본 2
+![스웨거 캡쳐본 2](./document/swagger/user_balance.png)
 ### API 명세 및 Mock API 작성
 
-#### **1. 유저 토큰 발급 API**
+### **1. 유저 토큰 발급 API**
+
 - **Endpoint**: `POST /api/users/token`
 - **Request**:
     - 없음
 - **Response**:
-  ```json
-  {
-    "token": "unique-user-token",
-    "queuePosition": 1,
-    "estimatedWaitTime": 300
-  }
-  ```
-- **Description**: 사용자가 대기열에 진입하여 토큰을 발급받는 API. 토큰은 유저의 대기 순서와 예상 대기 시간을 포함.
-- **Error**:
-- `500 Internal Server Error`: `대기열 시스템 오류`
-- **Authorization**: 없음(초기 토큰 발급이므로 필요없음)
 
----
+    ```json
+    {
+      "userToken": "unique-user-token"
+    }
+    
+    ```
 
-#### **2. 예약 가능 날짜 조회 API**
-- **Endpoint**: `GET /api/reservations/dates`
-- **Request**:
-    - 없음
-- **Response**:
-  ```json
-  {
-    "availableDates": ["2024-10-12", "2024-10-13", "2024-10-14"]
-  }
-  ```
-- **Description**: 예약 가능한 날짜 목록을 반환.
+- **Description**: 사용자가 서비스를 이용하기 위한 유저 토큰을 발급받는 API.
 - **Error**:
-- `500 Internal Server Error`: `예약 가능한 날짜를 가져올 수 없어요~`
+    - `500 Internal Server Error`: `유저 토큰 발급 오류`
 - **Authorization**: 없음
 
 ---
 
-#### **3. 특정 날짜의 좌석 조회 API**
-- **Endpoint**: `GET /api/reservations/seats`
+### **2. 예약 가능 일정 조회 API**
+
+- **Endpoint**: `GET /api/concerts/schedules`
 - **Request**:
-  ```json
-  {
-    "date": "2024-10-12"
-  }
-  ```
+    - 없음
 - **Response**:
-  ```json
-  {
-    "date": "2024-10-12",
-    "availableSeats": [1, 2, 3, 4, 5]
-  }
-  ```
-- **Description**: 특정 날짜에 예약 가능한 좌석 정보를 반환.
-- - **Error**:
-- `400 Bad Request`: `날짜 정보가 없거나 불가능해요.`
-- `500 Internal Server Error`: `좌석 정보를 가져올 수 없어요.`
-- **Authorization**: `Bearer {token}` (발급된 토큰이 필요)
+
+    ```json
+    {
+      "availableSchedules": [
+        {
+          "concertScheduleId": 1,
+          "concertDate": "2024-10-12",
+          "concertTitle": "콘서트 A"
+        },
+        {
+          "concertScheduleId": 2,
+          "concertDate": "2024-10-13",
+          "concertTitle": "콘서트 B"
+        }
+      ]
+    }
+    
+    ```
+
+- **Description**: 예약 가능한 콘서트 일정 목록을 반환.
+- **Error**:
+    - `500 Internal Server Error`: `예약 가능한 일정을 가져올 수 없어요.`
+- **Authorization**: 없음
+
 ---
 
-#### **4. 좌석 예약 요청 API**
+### **3. 특정 일정의 좌석 조회 API**
+
+- **Endpoint**: `GET /api/concerts/schedules/{scheduleId}/seats`
+- **Request Parameters**:
+    - `scheduleId` (Path Variable): 조회할 콘서트 일정 ID
+- **Response**:
+
+    ```json
+    {
+      "concertScheduleId": 1,
+      "availableSeats": [
+        {
+          "seatNumber": 1,
+          "status": "available"
+        },
+        {
+          "seatNumber": 2,
+          "status": "available"
+        },
+        {
+          "seatNumber": 3,
+          "status": "reserved"
+        }
+      ]
+    }
+    
+    ```
+
+- **Description**: 특정 콘서트 일정의 좌석 상태를 반환.
+- **Error**:
+    - `400 Bad Request`: `잘못된 일정 ID에요.`
+    - `500 Internal Server Error`: `좌석 정보를 가져올 수 없어요.`
+- **Authorization**: `Bearer {userToken}`
+
+---
+
+### **4. 좌석 예약 요청 API**
+
 - **Endpoint**: `POST /api/reservations`
 - **Request**:
-  ```json
-  {
-    "userToken": "unique-user-token",
-    "seatNumber": 3,
-    "reservationDate": "2024-10-12"
-  }
-  ```
+
+    ```json
+    {
+      "userToken": "unique-user-token",
+      "concertScheduleId": 1,
+      "seatNumber": 3
+    }
+    
+    ```
+
 - **Response**:
-  ```json
-  {
-    "reservationId": 123,
-    "status": "RESERVED",
-    "expirationTime": "2024-10-12T10:15:00"
-  }
-  ```
-- **Description**: 사용자가 좌석을 예약하고, 일정 시간 동안 임시로 해당 좌석을 예약 상태로 유지하는 API.
+
+    ```json
+    {
+      "reservationId": 123,
+      "status": "PENDING",
+      "expirationTime": "2024-10-12T10:15:00"
+    }
+    
+    ```
+
+- **Description**: 사용자가 좌석을 예약하고, 일정 시간 동안 해당 좌석을 `PENDING` 상태로 유지하는 API.
 - **Error**:
-    - `400 Bad Request`: `잘못된 좌석 번호이거나 날짜가 입력되었어요.`
+    - `400 Bad Request`: `잘못된 좌석 번호이거나 일정 ID가 입력되었어요.`
     - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
-    - `409 Conflict`: `이선좌... 이미 예약된 좌석이에요.`
-    - `500 Internal Server Error`: `예약 시스템이 아파요.`
-- **Authorization**: `Bearer {token}`
+    - `409 Conflict`: `이미 예약된 좌석이에요.`
+    - `500 Internal Server Error`: `예약 시스템 오류`
+- **Authorization**: `Bearer {userToken}`
+
 ---
 
-#### **5. 잔액 충전 API**
-- **Endpoint**: `POST /api/users/charge`
+### **5. 잔액 충전 API**
+
+- **Endpoint**: `POST /api/users/balance/charge`
 - **Request**:
-  ```json
-  {
-    "userToken": "unique-user-token",
-    "amount": 50000
-  }
-  ```
+
+    ```json
+    {
+      "userToken": "unique-user-token",
+      "amount": 50000
+    }
+    
+    ```
+
 - **Response**:
-  ```json
-  {
-    "status": "SUCCESS",
-    "currentBalance": 100000
-  }
-  ```
+
+    ```json
+    {
+      "status": "SUCCESS",
+      "currentBalance": 100000
+    }
+    
+    ```
+
 - **Description**: 사용자의 잔액을 충전하는 API.
 - **Error**:
-    - `400 Bad Request`: `불가능한 양이에요.`
+    - `400 Bad Request`: `유효하지 않은 금액이에요.`
     - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
-    - `500 Internal Server Error`: `충전 시스템이 아파요.`
-- **Authorization**: `Bearer {token}`
+    - `500 Internal Server Error`: `잔액 충전 오류`
+- **Authorization**: `Bearer {userToken}`
+
 ---
 
-#### **6. 잔액 조회 API**
+### **6. 잔액 조회 및 거래 내역 API**
+
 - **Endpoint**: `GET /api/users/balance`
 - **Request**:
-  ```json
-  {
-    "userToken": "unique-user-token"
-  }
-  ```
+    - 없음
 - **Response**:
-  ```json
-  {
-    "currentBalance": 100000
-  }
-  ```
-- **Description**: 사용자의 현재 잔액을 조회하는 API.
+
+    ```json
+    {
+      "currentBalance": 100000,
+      "balanceHistory": [
+        {
+          "transactionDate": "2024-10-10T12:00:00",
+          "transactionType": "charge",
+          "amount": 50000
+        },
+        {
+          "transactionDate": "2024-10-11T15:30:00",
+          "transactionType": "payment",
+          "amount": -30000
+        }
+      ]
+    }
+    
+    ```
+
+- **Description**: 사용자의 현재 잔액 및 거래 내역을 조회하는 API.
 - **Error**:
     - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
-    - `500 Internal Server Error`: `잔액을 가져오는데 실패했어요.`
-- **Authorization**: `Bearer {token}`
+    - `500 Internal Server Error`: `잔액 조회 오류`
+- **Authorization**: `Bearer {userToken}`
+
 ---
 
-#### **7. 결제 API**
+### **7. 결제 API**
+
 - **Endpoint**: `POST /api/payments`
 - **Request**:
-  ```json
-  {
-    "userToken": "unique-user-token",
-    "reservationId": 123,
-    "paymentAmount": 50000
-  }
-  ```
+
+    ```json
+    {
+      "userToken": "unique-user-token",
+      "reservationId": 123,
+      "paymentAmount": 50000
+    }
+    
+    ```
+
 - **Response**:
-  ```json
-  {
-    "status": "COMPLETED",
-    "paymentId": 789
-  }
-  ```
+
+    ```json
+    {
+      "status": "COMPLETED",
+      "paymentId": 789
+    }
+    
+    ```
+
 - **Description**: 예약된 좌석에 대해 결제를 처리하는 API.
 - **Error**:
     - `400 Bad Request`: `잘못된 결제 정보에요.`
     - `401 Unauthorized`: `잘못되거나 만료된 유저 토큰이에요.`
-    - `409 Conflict`: `에엥 돈을 더 내시려고요? 이미 결제되었어요~!`
-    - `500 Internal Server Error`: `결제 시스템이 아파요.`
-- **Authorization**: `Bearer {token}`
+    - `409 Conflict`: `이미 결제된 예약이에요.`
+    - `500 Internal Server Error`: `결제 처리 오류`
+- **Authorization**: `Bearer {userToken}`
+
 ---
 
-### 기술 스택 및 기본 패키지 구조
-**기술 스택**
+## 기술 스택 및 기본 패키지 구조
+
+### 기술 스택
+
 - **Backend**: Kotlin, Spring Boot
 - **Database**: PostgreSQL
 - **ORM**: JPA (Hibernate)
 - **In-memory DB (for testing)**: H2
 - **API Documentation**: SpringDoc OpenAPI
-- **Testing**: JUnit5, AssertJ
+- **Testing**: JUnit5, AssertJ, Mockito
 - **Dependency Management**: Gradle
 
 ---
 
-**기본 패키지 구조**
-```plaintext
+### 기본 패키지 구조
+
+```
 /src
   /interfaces (Presentation 계층)
     /api
       /user
-        UserController.kt  // 유저 토큰 발급 및 잔액 조회/충전 API
+        UserController.kt          // 유저 토큰 발급 및 잔액 조회/충전 API
       /reservation
-        ReservationController.kt  // 좌석 예약 요청 및 좌석/날짜 조회 API
+        ReservationController.kt   // 좌석 예약 요청 및 좌석/일정 조회 API
       /payment
-        PaymentController.kt  // 결제 API
+        PaymentController.kt       // 결제 API
+      /queue
+        QueueController.kt         // 대기열 토큰 발급 및 상태 조회 API
     /dto
-      TokenResponse.kt  // 유저 토큰 관련 DTO
-      SeatAvailabilityResponse.kt  // 좌석 조회 관련 DTO
-      ReservationRequest.kt  // 좌석 예약 요청 DTO
-      ChargeRequest.kt  // 잔액 충전 요청 DTO
-      PaymentRequest.kt  // 결제 요청 DTO
+      UserTokenResponse.kt         // 유저 토큰 응답 DTO
+      SeatAvailabilityResponse.kt  // 좌석 조회 응답 DTO
+      ReservationRequest.kt        // 좌석 예약 요청 DTO
+      ChargeRequest.kt             // 잔액 충전 요청 DTO
+      PaymentRequest.kt            // 결제 요청 DTO
+      QueueTokenResponse.kt        // 대기열 토큰 응답 DTO
+      BalanceResponse.kt           // 잔액 및 거래 내역 응답 DTO
   /application (Application 계층)
     /user
-      UserFacade.kt  // 유저 관련 비즈니스 로직 조합
+      UserFacade.kt                // 유저 관련 비즈니스 로직 조합
     /reservation
-      ReservationFacade.kt  // 예약 관련 비즈니스 로직 조합
+      ReservationFacade.kt         // 예약 관련 비즈니스 로직 조합
     /payment
-      PaymentFacade.kt  // 결제 관련 비즈니스 로직 조합
+      PaymentFacade.kt             // 결제 관련 비즈니스 로직 조합
+    /queue
+      QueueFacade.kt               // 대기열 관련 비즈니스 로직 조합
   /domain (Domain 계층)
     /user
-      User.kt  // 유저 도메인 모델
-      UserService.kt  // 유저 비즈니스 로직 처리
+      User.kt                      // 유저 도메인 모델
+      UserService.kt               // 유저 비즈니스 로직 처리
+      UserRepository.kt            // 유저 저장소 인터페이스
     /reservation
-      Reservation.kt  // 예약 도메인 모델
-      Seat.kt  // 좌석 도메인 모델
-      ReservationService.kt  // 예약 비즈니스 로직 처리
+      Reservation.kt               // 예약 도메인 모델
+      Seat.kt                      // 좌석 도메인 모델
+      ReservationService.kt        // 예약 비즈니스 로직 처리
+      SeatService.kt               // 좌석 비즈니스 로직 처리
+      ReservationRepository.kt     // 예약 저장소 인터페이스
+      SeatRepository.kt            // 좌석 저장소 인터페이스
     /payment
-      Payment.kt  // 결제 도메인 모델
-      PaymentService.kt  // 결제 비즈니스 로직 처리
+      Payment.kt                   // 결제 도메인 모델
+      PaymentService.kt            // 결제 비즈니스 로직 처리
+      PaymentRepository.kt         // 결제 저장소 인터페이스
+    /queue
+      QueueEntry.kt                // 대기열 엔티티
+      QueueService.kt              // 대기열 비즈니스 로직 처리
+      QueueRepository.kt           // 대기열 저장소 인터페이스
+    /concert
+      Concert.kt                   // 콘서트 도메인 모델
+      ConcertSchedule.kt           // 콘서트 일정 도메인 모델
+      ConcertService.kt            // 콘서트 비즈니스 로직 처리
+      ConcertRepository.kt         // 콘서트 저장소 인터페이스
+      ConcertScheduleRepository.kt // 콘서트 일정 저장소 인터페이스
+    /balance
+      BalanceHistory.kt            // 잔액 거래 내역 도메인 모델
+      BalanceService.kt            // 잔액 비즈니스 로직 처리
+      BalanceHistoryRepository.kt  // 잔액 거래 내역 저장소 인터페이스
   /infrastructure (Persistence 계층)
     /user
-      UserRepositoryJpaImpl.kt  // 유저 리포지토리 JPA 구현체
+      UserRepositoryJpaImpl.kt           // 유저 리포지토리 JPA 구현체
     /reservation
-      ReservationRepositoryJpaImpl.kt  // 예약 리포지토리 JPA 구현체
-      SeatRepositoryJpaImpl.kt  // 좌석 리포지토리 JPA 구현체
+      ReservationRepositoryJpaImpl.kt    // 예약 리포지토리 JPA 구현체
+      SeatRepositoryJpaImpl.kt           // 좌석 리포지토리 JPA 구현체
     /payment
-      PaymentRepositoryJpaImpl.kt  // 결제 리포지토리 JPA 구현체
+      PaymentRepositoryJpaImpl.kt        // 결제 리포지토리 JPA 구현체
+    /queue
+      QueueRepositoryJpaImpl.kt          // 대기열 리포지토리 JPA 구현체
+    /concert
+      ConcertRepositoryJpaImpl.kt        // 콘서트 리포지토리 JPA 구현체
+      ConcertScheduleRepositoryJpaImpl.kt // 콘서트 일정 리포지토리 JPA 구현체
+    /balance
+      BalanceHistoryRepositoryJpaImpl.kt // 잔액 거래 내역 리포지토리 JPA 구현체
+
 ```
 
 ---
-
 
