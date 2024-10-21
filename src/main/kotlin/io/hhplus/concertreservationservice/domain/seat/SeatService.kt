@@ -1,4 +1,4 @@
-package io.hhplus.concertreservationservice.domain.reservation
+package io.hhplus.concertreservationservice.domain.seat
 
 import io.hhplus.concertreservationservice.interfaces.dto.SeatDto
 import org.springframework.stereotype.Service

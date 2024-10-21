@@ -5,8 +5,8 @@ import io.hhplus.concertreservationservice.domain.concert.Concert
 import io.hhplus.concertreservationservice.domain.concert.ConcertSchedule
 import io.hhplus.concertreservationservice.domain.concert.ConcertScheduleRepository
 import io.hhplus.concertreservationservice.domain.concert.ConcertRepository
-import io.hhplus.concertreservationservice.domain.reservation.Seat
-import io.hhplus.concertreservationservice.domain.reservation.SeatRepository
+import io.hhplus.concertreservationservice.domain.seat.Seat
+import io.hhplus.concertreservationservice.domain.seat.SeatRepository
 import io.hhplus.concertreservationservice.domain.user.User
 import io.hhplus.concertreservationservice.domain.user.UserRepository
 import io.hhplus.concertreservationservice.interfaces.common.AuthUtil

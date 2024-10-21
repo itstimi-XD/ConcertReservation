@@ -1,4 +1,4 @@
-package io.hhplus.concertreservationservice.domain.reservation
+package io.hhplus.concertreservationservice.domain.seat
 
 import jakarta.persistence.*
 import java.time.LocalDateTime

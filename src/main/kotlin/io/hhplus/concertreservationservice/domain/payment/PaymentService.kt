@@ -3,9 +3,9 @@ package io.hhplus.concertreservationservice.domain.payment
 import io.hhplus.concertreservationservice.domain.queue.QueueRepository
 import io.hhplus.concertreservationservice.domain.reservation.ReservationRepository
 import io.hhplus.concertreservationservice.domain.reservation.ReservationStatus
-import io.hhplus.concertreservationservice.domain.reservation.SeatRepository
+import io.hhplus.concertreservationservice.domain.seat.SeatRepository
+import io.hhplus.concertreservationservice.domain.seat.SeatStatus
 import io.hhplus.concertreservationservice.domain.user.UserRepository
-import io.hhplus.concertreservationservice.domain.user.User
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime

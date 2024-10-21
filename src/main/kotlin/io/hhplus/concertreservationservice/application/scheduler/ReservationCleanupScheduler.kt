@@ -3,7 +3,7 @@ package io.hhplus.concertreservationservice.application.scheduler
 import io.hhplus.concertreservationservice.domain.queue.QueueRepository
 import io.hhplus.concertreservationservice.domain.reservation.ReservationRepository
 import io.hhplus.concertreservationservice.domain.reservation.ReservationStatus
-import io.hhplus.concertreservationservice.domain.reservation.SeatRepository
+import io.hhplus.concertreservationservice.domain.seat.SeatRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component

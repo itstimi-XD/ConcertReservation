@@ -1,4 +1,4 @@
-package io.hhplus.concertreservationservice.domain.reservation
+package io.hhplus.concertreservationservice.domain.seat
 
 interface SeatRepository {
     fun findByConcertScheduleIdAndSeatStatus(concertScheduleId: Long, seatStatus: String): List<Seat>
