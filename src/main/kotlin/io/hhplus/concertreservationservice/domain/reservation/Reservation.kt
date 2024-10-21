@@ -25,12 +25,12 @@ data class Reservation(
     @Column(nullable = false)
     var status: String, // "reserved", "payment_completed", "cancelled"
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "expiration_time", nullable = false)
+    @Column(name = "expiration_time", nullable = false, columnDefinition = "TIMESTAMP")
     val expirationTime: LocalDateTime
 )

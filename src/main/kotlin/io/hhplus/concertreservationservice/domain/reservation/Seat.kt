@@ -1,6 +1,5 @@
 package io.hhplus.concertreservationservice.domain.reservation
 
-import io.hhplus.concertreservationservice.domain.concert.ConcertSchedule
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -24,10 +23,10 @@ data class Seat(
     @Column(name = "user_id")
     var userId: Long? = null,
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 
     @Version // 낙관적 락을 위한 버전 필드
