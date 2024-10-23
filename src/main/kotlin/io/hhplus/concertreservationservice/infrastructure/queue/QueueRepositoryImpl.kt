@@ -2,6 +2,7 @@ package io.hhplus.concertreservationservice.infrastructure.queue
 
 import io.hhplus.concertreservationservice.domain.queue.QueueEntry
 import io.hhplus.concertreservationservice.domain.queue.QueueRepository
+import io.hhplus.concertreservationservice.domain.queue.QueueStatus
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -27,7 +28,7 @@ class QueueRepositoryImpl(
         return jpaQueueRepository.findById(id).orElse(null)
     }
 
-    override fun findByUserIdAndStatus(userId: Long, status: String): QueueEntry? {
+    override fun findByUserIdAndStatus(userId: Long, status: QueueStatus): QueueEntry? {
         return jpaQueueRepository.findByUserIdAndStatus(userId, status)
     }
 
@@ -39,35 +40,35 @@ class QueueRepositoryImpl(
         return jpaQueueRepository.count()
     }
 
-    override fun findTopByStatusOrderByQueuePositionAsc(status: String): QueueEntry? {
+    override fun findTopByStatusOrderByQueuePositionAsc(status: QueueStatus): QueueEntry? {
         return jpaQueueRepository.findTopByStatusOrderByQueuePositionAsc(status)
     }
 
-    override fun countByStatus(status: String): Long {
+    override fun countByStatus(status: QueueStatus): Long {
         return jpaQueueRepository.countByStatus(status)
     }
 
-    override fun findAllByStatusAndUpdatedAtBefore(status: String, updatedAt: LocalDateTime): List<QueueEntry> {
+    override fun findAllByStatusAndUpdatedAtBefore(status: QueueStatus, updatedAt: LocalDateTime): List<QueueEntry> {
         return jpaQueueRepository.findAllByStatusAndUpdatedAtBefore(status, updatedAt)
     }
 
     override fun findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(
         concertScheduleId: Long,
-        status: String,
+        status: QueueStatus,
         limit: Int
     ): List<QueueEntry> {
         val pageable = PageRequest.of(0, limit)
         return jpaQueueRepository.findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(concertScheduleId, status, pageable)
     }
 
-    override fun countByConcertScheduleIdAndStatus(concertScheduleId: Long, status: String): Long {
+    override fun countByConcertScheduleIdAndStatus(concertScheduleId: Long, status: QueueStatus): Long {
         return jpaQueueRepository.countByConcertScheduleIdAndStatus(concertScheduleId, status)
     }
 
     override fun findByUserIdAndConcertScheduleIdAndStatus(
         userId: Long,
         concertScheduleId: Long,
-        status: String
+        status: QueueStatus
     ): QueueEntry? {
         return jpaQueueRepository.findByUserIdAndConcertScheduleIdAndStatus(userId, concertScheduleId, status)
     }

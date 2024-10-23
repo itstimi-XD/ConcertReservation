@@ -22,8 +22,9 @@ data class Reservation(
     @Column(name = "seat_number", nullable = false)
     val seatNumber: Int,
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: String, // "reserved", "payment_completed", "cancelled"
+    var status: ReservationStatus, // "reserved", "payment_completed", "cancelled"
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val createdAt: LocalDateTime = LocalDateTime.now(),

@@ -1,6 +1,7 @@
 package io.hhplus.concertreservationservice.infrastructure.queue
 
 import io.hhplus.concertreservationservice.domain.queue.QueueEntry
+import io.hhplus.concertreservationservice.domain.queue.QueueStatus
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -11,21 +12,21 @@ import java.time.LocalDateTime
 @Repository
 interface JpaQueueRepository : JpaRepository<QueueEntry, Long> {
     fun findByQueueToken(queueToken: String): QueueEntry?
-    fun findByUserIdAndStatus(userId: Long, status: String): QueueEntry?
-    fun findTopByStatusOrderByQueuePositionAsc(status: String): QueueEntry?
-    fun countByStatus(status: String): Long
-    fun findAllByStatusAndUpdatedAtBefore(status: String, updatedAt: LocalDateTime): List<QueueEntry>
-    // 콘서트 스케줄별 메서드 추가
+    fun findByUserIdAndStatus(userId: Long, status: QueueStatus): QueueEntry?
+    fun findTopByStatusOrderByQueuePositionAsc(status: QueueStatus): QueueEntry?
+    fun countByStatus(status: QueueStatus): Long
+    fun findAllByStatusAndUpdatedAtBefore(status: QueueStatus, updatedAt: LocalDateTime): List<QueueEntry>
+
     @Query("SELECT q FROM QueueEntry q WHERE q.concertScheduleId = :concertScheduleId AND q.status = :status ORDER BY q.queuePosition ASC")
     fun findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(
         @Param("concertScheduleId") concertScheduleId: Long,
-        @Param("status") status: String,
+        @Param("status") status: QueueStatus,
         pageable: Pageable
     ): List<QueueEntry>
 
     fun countByConcertScheduleIdAndStatus(
         concertScheduleId: Long,
-        status: String
+        status: QueueStatus
     ): Long
 
     fun deleteByUserId(userId: Long)
@@ -33,6 +34,6 @@ interface JpaQueueRepository : JpaRepository<QueueEntry, Long> {
     fun findByUserIdAndConcertScheduleIdAndStatus(
         userId: Long,
         concertScheduleId: Long,
-        status: String
+        status: QueueStatus
     ): QueueEntry?
 }

@@ -50,7 +50,7 @@ class QueueService(
         val nextEntry = queueRepository.findTopByStatusOrderByQueuePositionAsc("waiting") ?: return
 
         // 상태 변경
-        nextEntry.status = "completed"
+        nextEntry.status = QueueStatus.COMPLETED
         queueRepository.save(nextEntry)
     }
 
