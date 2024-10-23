@@ -8,7 +8,7 @@ class SeatService(
     private val seatRepository: SeatRepository
 ) {
     fun getAvailableSeats(concertScheduleId: Long): List<SeatDto> {
-        val seats = seatRepository.findByConcertScheduleIdAndSeatStatus(concertScheduleId, "available")
+        val seats = seatRepository.findByConcertScheduleIdAndSeatStatus(concertScheduleId, SeatStatus.AVAILABLE)
         return seats.map { seat ->
             SeatDto(
                 seatId = seat.id,

@@ -17,8 +17,9 @@ data class Seat(
     @Column(name = "seat_number", nullable = false)
     val seatNumber: Int,
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "seat_status", nullable = false)
-    var seatStatus: String, // "occupied", "available"
+    var seatStatus: SeatStatus, // "occupied", "available"
 
     @Column(name = "user_id")
     var userId: Long? = null,
