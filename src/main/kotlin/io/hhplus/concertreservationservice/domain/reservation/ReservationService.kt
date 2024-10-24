@@ -28,7 +28,7 @@ class ReservationService(
                 ?: throw IllegalArgumentException("Concert schedule not found")
 
             // 좌석 정보 조회
-            val seat = seatRepository.findByConcertScheduleIdAndSeatNumber(concertScheduleId, seatNumber)
+            val seat = seatRepository.findByConcertScheduleIdAndSeatNumberWithLock(concertScheduleId, seatNumber)
                 ?: throw IllegalArgumentException("Seat not found")
 
             if (seat.seatStatus != SeatStatus.AVAILABLE) {
