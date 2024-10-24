@@ -4,6 +4,7 @@ import io.hhplus.concertreservationservice.application.balance.BalanceFacade
 import io.hhplus.concertreservationservice.interfaces.dto.ApiResponse
 import io.hhplus.concertreservationservice.interfaces.dto.BalanceRequest
 import io.hhplus.concertreservationservice.interfaces.dto.BalanceResponse
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -14,19 +15,19 @@ class BalanceController(
 ) {
     @PostMapping("/recharge")
     fun rechargeBalance(
-        @RequestHeader("User-Token") userToken: String,
-        @RequestHeader("Queue-Token") queueToken: String,
+        request: HttpServletRequest,
         @RequestBody balanceRequest: BalanceRequest
     ): ResponseEntity<ApiResponse> {
+        val userToken = request.getAttribute("userToken") as String
+        val queueToken = request.getAttribute("queueToken") as String
         balanceFacade.rechargeBalance(userToken, queueToken, balanceRequest)
         return ResponseEntity.ok(ApiResponse("Balance recharged successfully"))
     }
 
     @GetMapping("/inquiry")
-    fun getBalance(
-        @RequestHeader("User-Token") userToken: String,
-        @RequestHeader("Queue-Token") queueToken: String
-    ): ResponseEntity<BalanceResponse> {
+    fun getBalance(request: HttpServletRequest): ResponseEntity<BalanceResponse> {
+        val userToken = request.getAttribute("userToken") as String
+        val queueToken = request.getAttribute("queueToken") as String
         val response = balanceFacade.getBalance(userToken, queueToken)
         return ResponseEntity.ok(response)
     }
