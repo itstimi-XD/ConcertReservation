@@ -1,6 +1,7 @@
 package io.hhplus.concertreservationservice.application.auth
 
 import io.hhplus.concertreservationservice.domain.user.UserRepository
+import io.hhplus.concertreservationservice.exception.ResourceNotFoundException
 import io.hhplus.concertreservationservice.interfaces.dto.AuthResponse
 import org.springframework.stereotype.Service
 
@@ -14,7 +15,7 @@ class AuthFacade(
     fun login(username: String, password: String): AuthResponse {
 
         val user = userRepository.findByName(username)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw ResourceNotFoundException("username: $username not found")
 
         return AuthResponse(userToken = "user-${user.id}")
     }

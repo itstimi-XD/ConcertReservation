@@ -1,5 +1,6 @@
 package io.hhplus.concertreservationservice.domain.user
 
+import io.hhplus.concertreservationservice.exception.InvalidTokenException
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,9 +12,9 @@ class UserService {
         // 여기서는 예시로 토큰이 "user-{userId}" 형식이라고 가정합니다.
 
         return if (token.startsWith("user-")) {
-            token.removePrefix("user-").toLongOrNull() ?: throw IllegalArgumentException("Invalid token")
+            token.removePrefix("user-").toLongOrNull() ?: throw InvalidTokenException("token: $token")
         } else {
-            throw IllegalArgumentException("Invalid token")
+                throw InvalidTokenException("token: $token")
         }
     }
 }

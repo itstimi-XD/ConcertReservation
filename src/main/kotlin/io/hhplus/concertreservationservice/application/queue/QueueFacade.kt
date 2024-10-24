@@ -2,6 +2,8 @@ package io.hhplus.concertreservationservice.application.queue
 
 import io.hhplus.concertreservationservice.domain.queue.QueueService
 import io.hhplus.concertreservationservice.domain.user.UserService
+import io.hhplus.concertreservationservice.exception.ErrorType
+import io.hhplus.concertreservationservice.exception.QueueException
 import io.hhplus.concertreservationservice.interfaces.dto.QueueRegistrationRequest
 import io.hhplus.concertreservationservice.interfaces.dto.QueueTokenResponse
 import org.springframework.stereotype.Service
@@ -24,7 +26,8 @@ class QueueFacade(
     }
 
     fun getQueueStatus(queueToken: String): QueueTokenResponse {
-        val queueEntry = queueService.getQueueStatus(queueToken) ?: throw IllegalArgumentException("Invalid queue token")
+    val queueEntry = queueService.getQueueStatus(queueToken)
+        ?: throw QueueException(ErrorType.INVALID_QUEUE_TOKEN, "queueToken: $queueToken")
         val estimatedWaitTime = queueService.calculateEstimatedWaitTime(queueEntry.queuePosition)
         return QueueTokenResponse(
             queueToken = queueEntry.queueToken,

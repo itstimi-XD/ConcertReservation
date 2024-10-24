@@ -1,5 +1,6 @@
 package io.hhplus.concertreservationservice.domain.concert
 
+import io.hhplus.concertreservationservice.exception.ResourceNotFoundException
 import io.hhplus.concertreservationservice.interfaces.dto.ConcertScheduleDto
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -14,7 +15,7 @@ class ConcertService(
         val schedules = concertScheduleRepository.findByAvailableDateAfter(now)
         return schedules.map { schedule ->
             val concert = concertRepository.findById(schedule.concertId)
-                ?: throw IllegalArgumentException("concert not found")
+                ?: throw ResourceNotFoundException("concertId:  ${schedule.concertId} not found")
 
             ConcertScheduleDto(
                 concertId = concert.id,
