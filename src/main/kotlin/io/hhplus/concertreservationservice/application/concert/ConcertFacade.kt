@@ -1,9 +1,8 @@
 package io.hhplus.concertreservationservice.application.concert
 
 import io.hhplus.concertreservationservice.domain.concert.ConcertService
-import io.hhplus.concertreservationservice.domain.reservation.Reservation
 import io.hhplus.concertreservationservice.domain.reservation.ReservationService
-import io.hhplus.concertreservationservice.domain.reservation.SeatService
+import io.hhplus.concertreservationservice.domain.seat.SeatService
 import io.hhplus.concertreservationservice.interfaces.common.AuthUtil
 import io.hhplus.concertreservationservice.interfaces.dto.ConcertScheduleDto
 import io.hhplus.concertreservationservice.interfaces.dto.ReservationRequest
