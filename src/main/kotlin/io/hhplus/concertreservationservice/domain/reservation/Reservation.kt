@@ -34,4 +34,16 @@ data class Reservation(
 
     @Column(name = "expiration_time", nullable = false, columnDefinition = "TIMESTAMP")
     val expirationTime: LocalDateTime
-)
+){
+
+    // 예약 만료 여부 확인
+    fun isExpired(currentTime: LocalDateTime): Boolean {
+        return expirationTime.isBefore(currentTime)
+    }
+
+    // 상태 업데이트 메서드
+    fun updateStatus(newStatus: ReservationStatus, currentTime: LocalDateTime) {
+        status = newStatus
+        updatedAt = currentTime
+    }
+}
