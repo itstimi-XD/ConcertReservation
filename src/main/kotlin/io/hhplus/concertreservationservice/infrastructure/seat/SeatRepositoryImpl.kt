@@ -22,4 +22,8 @@ class SeatRepositoryImpl(
     override fun findById(seatId: Long): Seat? {
         return jpaSeatRepository.findById(seatId).orElse(null)
     }
+
+    override fun saveAll(seats: List<Seat>): List<Seat> {
+        return jpaSeatRepository.saveAll(seats)
+    }
 }

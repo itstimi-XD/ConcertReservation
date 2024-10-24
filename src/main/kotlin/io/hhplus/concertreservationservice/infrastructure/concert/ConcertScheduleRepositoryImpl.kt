@@ -21,4 +21,8 @@ class ConcertScheduleRepositoryImpl(
     override fun findById(id: Long): ConcertSchedule? {
         return jpaConcertScheduleRepository.findById(id).orElse(null)
     }
+
+    override fun save(concertSchedule: ConcertSchedule): ConcertSchedule {
+        return jpaConcertScheduleRepository.save(concertSchedule)
+    }
 }
