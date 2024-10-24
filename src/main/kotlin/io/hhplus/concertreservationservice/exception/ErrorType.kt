@@ -17,4 +17,5 @@ enum class ErrorType(
     SEAT_ALREADY_OCCUPIED(ErrorCode.SEAT_ERROR, "좌석이 이미 점유되었습니다.", LogLevel.WARN),
     CONCURRENCY_ERROR(ErrorCode.CONCURRENCY_ERROR, "동시 작업으로 인해 요청을 처리할 수 없습니다. 다시 시도해 주세요.", LogLevel.WARN),
     INVALID_TOKEN(ErrorCode.AUTHENTICATION_ERROR, "유효하지 않은 토큰입니다.", LogLevel.WARN),
+    SEAT_ALREADY_RESERVED(ErrorCode.SEAT_ERROR, "좌석이 이미 예약되었습니다.", LogLevel.WARN),
 }
