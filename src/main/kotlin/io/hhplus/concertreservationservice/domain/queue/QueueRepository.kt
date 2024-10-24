@@ -33,4 +33,10 @@ interface QueueRepository {
     ): QueueEntry?
 
     fun deleteByUserId(userId: Long)
+
+    fun existsByUserIdAndConcertScheduleIdAndStatus(
+        userId: Long,
+        concertScheduleId: Long,
+        status: QueueStatus
+    ): Boolean
 }

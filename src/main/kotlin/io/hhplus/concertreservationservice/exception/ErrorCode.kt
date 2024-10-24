@@ -5,5 +5,8 @@ enum class ErrorCode {
     NOT_FOUND,
     CLIENT_ERROR,
     DATABASE_ERROR,
-    // 기타 에러 코드
+    INVALID_REQUEST,
+    SEAT_ERROR,
+    CONCURRENCY_ERROR,
+    AUTHENTICATION_ERROR
 }

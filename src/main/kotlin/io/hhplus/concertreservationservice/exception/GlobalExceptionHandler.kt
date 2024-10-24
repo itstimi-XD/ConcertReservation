@@ -25,6 +25,8 @@ class GlobalExceptionHandler {
             ErrorCode.NOT_FOUND -> HttpStatus.NOT_FOUND
             ErrorCode.CLIENT_ERROR -> HttpStatus.BAD_REQUEST
             ErrorCode.DATABASE_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR
+            ErrorCode.AUTHENTICATION_ERROR -> HttpStatus.UNAUTHORIZED
+            ErrorCode.SEAT_ERROR -> HttpStatus.CONFLICT
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
 
@@ -37,6 +39,19 @@ class GlobalExceptionHandler {
         )
 
         return ResponseEntity.status(status).body(errorResponse)
+    }
+
+    @ExceptionHandler(ConcurrentModificationException::class)
+    fun handleConcurrentModificationException(e: ConcurrentModificationException): ResponseEntity<ErrorResponse> {
+        log.warn(e.message, e)
+
+        val errorResponse = ErrorResponse(
+            status = "FAIL",
+            errorCode = "CONCURRENCY_ERROR",
+            errorMessage = e.message ?: "동시 작업으로 인해 요청을 처리할 수 없습니다. 다시 시도해 주세요."
+        )
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse)
     }
 
     // 기타 예외 처리

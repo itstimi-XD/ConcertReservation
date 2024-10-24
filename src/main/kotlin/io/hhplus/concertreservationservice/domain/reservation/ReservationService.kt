@@ -1,9 +1,12 @@
 package io.hhplus.concertreservationservice.domain.reservation
 
 import io.hhplus.concertreservationservice.domain.concert.ConcertScheduleRepository
-import io.hhplus.concertreservationservice.domain.seat.SeatAlreadyReservedException
+import io.hhplus.concertreservationservice.exception.SeatAlreadyReservedException
 import io.hhplus.concertreservationservice.domain.seat.SeatRepository
 import io.hhplus.concertreservationservice.domain.seat.SeatStatus
+import io.hhplus.concertreservationservice.exception.ConcurrencyException
+import io.hhplus.concertreservationservice.exception.ResourceNotFoundException
+import io.hhplus.concertreservationservice.exception.SeatAlreadyOccupiedException
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -25,14 +28,14 @@ class ReservationService(
 
             // 콘서트 스케줄 확인
             concertScheduleRepository.findById(concertScheduleId)
-                ?: throw IllegalArgumentException("Concert schedule not found")
+                ?: ResourceNotFoundException("Concert schedule not found")
 
             // 좌석 정보 조회
             val seat = seatRepository.findByConcertScheduleIdAndSeatNumberWithLock(concertScheduleId, seatNumber)
-                ?: throw IllegalArgumentException("Seat not found")
+                ?: throw ResourceNotFoundException("Seat not found")
 
             if (seat.seatStatus != SeatStatus.AVAILABLE) {
-                throw IllegalArgumentException("Seat is already occupied")
+                throw SeatAlreadyOccupiedException("seatId: ${seat.id}, seatNumber: ${seat.seatNumber}")
             }
 
             // 좌석 상태 업데이트
@@ -57,13 +60,13 @@ class ReservationService(
             return reservationRepository.save(reservation)
         } catch (e: OptimisticLockingFailureException) {
             // 낙관적 락 충돌 시 예외 처리
-            throw SeatAlreadyReservedException("Seat is already reserved by another user")
+            throw ConcurrencyException("좌석 예약 중 동시 수정이 발생했습니다. 다시 시도해 주세요.")
         }
     }
 
     fun findReservationByIdAndUserId(reservationId: Long, userId: Long): Reservation {
         return reservationRepository.findByIdAndUserId(reservationId, userId)
-            ?: throw IllegalArgumentException("Reservation not found")
+            ?: throw ResourceNotFoundException("Reservation not found")
     }
 
     fun updateReservationStatus(reservation: Reservation, status: ReservationStatus, now: LocalDateTime) {
@@ -71,6 +74,4 @@ class ReservationService(
         reservation.updatedAt = now
         reservationRepository.save(reservation)
     }
-
-
 }
