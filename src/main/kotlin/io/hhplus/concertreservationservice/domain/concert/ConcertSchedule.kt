@@ -29,6 +29,6 @@ data class ConcertSchedule(
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
+    var updatedAt: LocalDateTime = LocalDateTime.now(),
 )
