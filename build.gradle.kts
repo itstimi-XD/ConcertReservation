@@ -43,7 +43,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
-    // PostgreSQL driver
+    // 로깅 설정
+    implementation("org.slf4j:slf4j-api")
+    implementation("ch.qos.logback:logback-classic")
 
     // H2 database (runtime only)
     runtimeOnly("com.h2database:h2")
