@@ -1,7 +1,9 @@
 package io.hhplus.concertreservationservice.domain.seat
 
+import io.hhplus.concertreservationservice.domain.reservation.Reservation
 import io.hhplus.concertreservationservice.interfaces.dto.SeatDto
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class SeatService(
@@ -17,4 +19,26 @@ class SeatService(
             )
         }
     }
+    fun getSeatById(seatId: Long): Seat {
+        return seatRepository.findById(seatId)
+            ?: throw IllegalArgumentException("Seat not found")
+    }
+    fun getSeatPrice(seatId: Long): Int {
+        val seat = getSeatById(seatId)
+        return seat.price
+    }
+    fun findSeatByLock(concertScheduleId: Long, seatNumber: Int): Seat {
+        return seatRepository.findByConcertScheduleIdAndSeatNumberWithLock(concertScheduleId, seatNumber)
+            ?: throw IllegalArgumentException("Seat Not found")
+    }
+
+    fun releaseSeatByReservation(reservation: Reservation, now: LocalDateTime) {
+        val seat = seatRepository.findById(reservation.seatId)
+            ?: throw IllegalArgumentException("Seat not found")
+        seat.seatStatus = SeatStatus.AVAILABLE
+        seat.userId = null
+        seat.updatedAt = now
+        seatRepository.save(seat)
+    }
+
 }

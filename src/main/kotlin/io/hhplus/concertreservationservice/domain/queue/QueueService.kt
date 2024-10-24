@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 
+
 @Service
 class QueueService(
     private val queueRepository: QueueRepository,
+    // TODO : WaitingQueue 도메인 객체가 아래 값들을 가지고 있도록 수정 필요
     @Value("\${scheduler.queueProcess.passLimit}") private val passLimit: Int,
     @Value("\${scheduler.queueCleanup.expirationMinutes}") private val expirationMinutes: Long
 ) {
@@ -77,5 +79,9 @@ class QueueService(
         val expirationTime = LocalDateTime.now().minusMinutes(expirationMinutes)
         val expiredEntries = queueRepository.findAllByStatusAndUpdatedAtBefore(QueueStatus.COMPLETED, expirationTime)
         queueRepository.deleteAll(expiredEntries)
+    }
+
+    fun deleteQueueByUserId(userId: Long) {
+        queueRepository.deleteByUserId(userId)
     }
 }

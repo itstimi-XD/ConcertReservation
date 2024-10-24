@@ -24,7 +24,7 @@ class ReservationService(
             val expirationTime = now.plusMinutes(expirationMinutes)
 
             // 콘서트 스케줄 확인
-            val concertSchedule = concertScheduleRepository.findById(concertScheduleId)
+            concertScheduleRepository.findById(concertScheduleId)
                 ?: throw IllegalArgumentException("Concert schedule not found")
 
             // 좌석 정보 조회
@@ -60,4 +60,17 @@ class ReservationService(
             throw SeatAlreadyReservedException("Seat is already reserved by another user")
         }
     }
+
+    fun findReservationByIdAndUserId(reservationId: Long, userId: Long): Reservation {
+        return reservationRepository.findByIdAndUserId(reservationId, userId)
+            ?: throw IllegalArgumentException("Reservation not found")
+    }
+
+    fun updateReservationStatus(reservation: Reservation, status: ReservationStatus, now: LocalDateTime) {
+        reservation.status = status
+        reservation.updatedAt = now
+        reservationRepository.save(reservation)
+    }
+
+
 }
