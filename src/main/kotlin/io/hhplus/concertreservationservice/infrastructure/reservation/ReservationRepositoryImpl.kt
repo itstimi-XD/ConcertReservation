@@ -2,6 +2,7 @@ package io.hhplus.concertreservationservice.infrastructure.reservation
 
 import io.hhplus.concertreservationservice.domain.reservation.Reservation
 import io.hhplus.concertreservationservice.domain.reservation.ReservationRepository
+import io.hhplus.concertreservationservice.domain.reservation.ReservationStatus
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
@@ -14,7 +15,7 @@ class ReservationRepositoryImpl(
         return jpaReservationRepository.save(reservation)
     }
 
-    override fun findAllByStatusAndExpirationTimeBefore(status: String, expirationTime: LocalDateTime): List<Reservation> {
+    override fun findAllByStatusAndExpirationTimeBefore(status: ReservationStatus, expirationTime: LocalDateTime): List<Reservation> {
         return jpaReservationRepository.findAllByStatusAndExpirationTimeBefore(status, expirationTime)
     }
 

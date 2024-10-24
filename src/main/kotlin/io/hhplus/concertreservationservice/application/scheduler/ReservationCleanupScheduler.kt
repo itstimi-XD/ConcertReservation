@@ -4,6 +4,7 @@ import io.hhplus.concertreservationservice.domain.queue.QueueRepository
 import io.hhplus.concertreservationservice.domain.reservation.ReservationRepository
 import io.hhplus.concertreservationservice.domain.reservation.ReservationStatus
 import io.hhplus.concertreservationservice.domain.seat.SeatRepository
+import io.hhplus.concertreservationservice.domain.seat.SeatStatus
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -21,7 +22,7 @@ class ReservationCleanupScheduler(
     fun cleanUpExpiredReservations() {
         val now = LocalDateTime.now()
         val expiredReservations = reservationRepository.findAllByStatusAndExpirationTimeBefore(
-            ReservationStatus.RESERVED.value,
+            ReservationStatus.RESERVED,
             now
         )
 
@@ -31,13 +32,13 @@ class ReservationCleanupScheduler(
 
             // 2) 좌석 점유 해제
             seatRepository.findById(reservation.seatId)?.let {
-                it.seatStatus = "available"
+                it.seatStatus = SeatStatus.AVAILABLE
                 it.userId = null
                 seatRepository.save(it)
             }
 
             // 3) 예약 상태 업데이트
-            reservation.status = ReservationStatus.CANCELLED.value
+            reservation.status = ReservationStatus.CANCELLED
             reservation.updatedAt = now
             reservationRepository.save(reservation)
         }

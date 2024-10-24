@@ -19,10 +19,10 @@ data class Payment(
     @Column(nullable = false)
     val amount: Int,
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val status: String, // "completed"
+    val status: PaymentStatus, // "completed"
 
-//    @Column(name = "created_at", nullable = false)
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 

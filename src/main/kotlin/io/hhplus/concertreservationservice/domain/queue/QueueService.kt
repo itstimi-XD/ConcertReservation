@@ -17,17 +17,17 @@ class QueueService(
     }
 
     fun isValidQueueToken(token: String): Boolean {
-        return queueRepository.findByQueueToken(token)?.status == "completed"
+        return queueRepository.findByQueueToken(token)?.status == QueueStatus.COMPLETED
     }
     fun registerUserInQueue(userId: Long, concertScheduleId: Long): QueueEntry {
         // 이미 대기열에 존재하는지 확인
-        val existingEntry = queueRepository.findByUserIdAndStatus(userId, "waiting")
+        val existingEntry = queueRepository.findByUserIdAndStatus(userId, QueueStatus.WAITING)
         existingEntry?.let {
             return it
         }
 
         // 대기열 순번 계산
-        val queuePosition = (queueRepository.countByStatus("waiting") + 1).toInt()
+        val queuePosition = (queueRepository.countByStatus(QueueStatus.WAITING) + 1).toInt()
 
         // QueueEntry 생성
         val queueEntry = QueueEntry(
@@ -35,7 +35,7 @@ class QueueService(
             queueToken = UUID.randomUUID().toString(),
             concertScheduleId = concertScheduleId,
             queuePosition = queuePosition,
-            status = "waiting"
+            status = QueueStatus.WAITING
         )
 
         return queueRepository.save(queueEntry)
@@ -47,7 +47,7 @@ class QueueService(
 
     fun processNextInQueue() {
         // 줄에서 맨 앞에 서있는 사용자 선택
-        val nextEntry = queueRepository.findTopByStatusOrderByQueuePositionAsc("waiting") ?: return
+        val nextEntry = queueRepository.findTopByStatusOrderByQueuePositionAsc(QueueStatus.WAITING) ?: return
 
         // 상태 변경
         nextEntry.status = QueueStatus.COMPLETED
@@ -63,11 +63,11 @@ class QueueService(
         val pageable = PageRequest.of(0, passLimit)
         val waitingUsers = queueRepository.findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(
             concertScheduleId,
-            "waiting",
+            QueueStatus.WAITING,
             passLimit
         )
         waitingUsers.forEach { queueEntry ->
-            queueEntry.status = "completed"
+            queueEntry.status = QueueStatus.COMPLETED
             queueEntry.updatedAt = LocalDateTime.now()
             queueRepository.save(queueEntry)
         }
@@ -75,7 +75,7 @@ class QueueService(
 
     fun removeExpiredEntries() {
         val expirationTime = LocalDateTime.now().minusMinutes(expirationMinutes)
-        val expiredEntries = queueRepository.findAllByStatusAndUpdatedAtBefore("completed", expirationTime)
+        val expiredEntries = queueRepository.findAllByStatusAndUpdatedAtBefore(QueueStatus.COMPLETED, expirationTime)
         queueRepository.deleteAll(expiredEntries)
     }
 }

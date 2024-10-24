@@ -68,17 +68,11 @@ class PaymentService(
             userId = userId,
             reservationId = reservationId,
             amount = seatPrice,
-            status = "completed",
+            status = PaymentStatus.COMPLETED,
             createdAt = now,
             updatedAt = now
         )
         paymentRepository.save(payment)
-
-        // 예약 상태 업데이트
-        reservation.status = ReservationStatus.PAYMENT_COMPLETED.value
-        reservation.updatedAt = now
-        reservationRepository.save(reservation)
-
         return payment
     }
 }

@@ -7,6 +7,7 @@ import io.hhplus.concertreservationservice.domain.concert.ConcertScheduleReposit
 import io.hhplus.concertreservationservice.domain.concert.ConcertRepository
 import io.hhplus.concertreservationservice.domain.seat.Seat
 import io.hhplus.concertreservationservice.domain.seat.SeatRepository
+import io.hhplus.concertreservationservice.domain.seat.SeatStatus
 import io.hhplus.concertreservationservice.domain.user.User
 import io.hhplus.concertreservationservice.domain.user.UserRepository
 import io.hhplus.concertreservationservice.interfaces.common.AuthUtil
@@ -77,7 +78,8 @@ class ReservationIntegrationTest {
             Seat(
                 concertScheduleId = concertSchedule.id,
                 seatNumber = seatNumber,
-                seatStatus = "available"
+                seatStatus = SeatStatus.AVAILABLE
+
             )
         }
         seatRepository.saveAll(seats)
@@ -101,7 +103,7 @@ class ReservationIntegrationTest {
         assertEquals(concertSchedule.id, reservationResponse.concertScheduleId)
 
         // 좌석 상태 확인
-        val seat = seatRepository.findByConcertScheduleIdAndSeatNumber(concertSchedule.id, 1)
+        val seat = seatRepository.findByConcertScheduleIdAndSeatNumberWithLock(concertSchedule.id, 1)
         assertNotNull(seat)
         assertEquals("occupied", seat?.seatStatus)
         assertEquals(user.id, seat?.userId)
