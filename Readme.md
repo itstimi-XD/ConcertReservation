@@ -447,8 +447,8 @@ erDiagram
 ### 기술 스택
 
 - **Backend**: Kotlin, Spring Boot
-- **Database**: PostgreSQL
-- **ORM**: JPA (Hibernate)
+- **Database**: MySQL
+- **ORM**: Spring Data JPA
 - **In-memory DB (for testing)**: H2
 - **API Documentation**: SpringDoc OpenAPI
 - **Testing**: JUnit5, AssertJ, Mockito
@@ -460,78 +460,124 @@ erDiagram
 
 ```
 /src
-  /interfaces (Presentation 계층)
-    /api
-      /user
-        UserController.kt          // 유저 토큰 발급 및 잔액 조회/충전 API
-      /reservation
-        ReservationController.kt   // 좌석 예약 요청 및 좌석/일정 조회 API
-      /payment
-        PaymentController.kt       // 결제 API
-      /queue
-        QueueController.kt         // 대기열 토큰 발급 및 상태 조회 API
-    /dto
-      UserTokenResponse.kt         // 유저 토큰 응답 DTO
-      SeatAvailabilityResponse.kt  // 좌석 조회 응답 DTO
-      ReservationRequest.kt        // 좌석 예약 요청 DTO
-      ChargeRequest.kt             // 잔액 충전 요청 DTO
-      PaymentRequest.kt            // 결제 요청 DTO
-      QueueTokenResponse.kt        // 대기열 토큰 응답 DTO
-      BalanceResponse.kt           // 잔액 및 거래 내역 응답 DTO
-  /application (Application 계층)
-    /user
-      UserFacade.kt                // 유저 관련 비즈니스 로직 조합
-    /reservation
-      ReservationFacade.kt         // 예약 관련 비즈니스 로직 조합
-    /payment
-      PaymentFacade.kt             // 결제 관련 비즈니스 로직 조합
-    /queue
-      QueueFacade.kt               // 대기열 관련 비즈니스 로직 조합
-  /domain (Domain 계층)
-    /user
-      User.kt                      // 유저 도메인 모델
-      UserService.kt               // 유저 비즈니스 로직 처리
-      UserRepository.kt            // 유저 저장소 인터페이스
-    /reservation
-      Reservation.kt               // 예약 도메인 모델
-      Seat.kt                      // 좌석 도메인 모델
-      ReservationService.kt        // 예약 비즈니스 로직 처리
-      SeatService.kt               // 좌석 비즈니스 로직 처리
-      ReservationRepository.kt     // 예약 저장소 인터페이스
-      SeatRepository.kt            // 좌석 저장소 인터페이스
-    /payment
-      Payment.kt                   // 결제 도메인 모델
-      PaymentService.kt            // 결제 비즈니스 로직 처리
-      PaymentRepository.kt         // 결제 저장소 인터페이스
-    /queue
-      QueueEntry.kt                // 대기열 엔티티
-      QueueService.kt              // 대기열 비즈니스 로직 처리
-      QueueRepository.kt           // 대기열 저장소 인터페이스
-    /concert
-      Concert.kt                   // 콘서트 도메인 모델
-      ConcertSchedule.kt           // 콘서트 일정 도메인 모델
-      ConcertService.kt            // 콘서트 비즈니스 로직 처리
-      ConcertRepository.kt         // 콘서트 저장소 인터페이스
-      ConcertScheduleRepository.kt // 콘서트 일정 저장소 인터페이스
-    /balance
-      BalanceHistory.kt            // 잔액 거래 내역 도메인 모델
-      BalanceService.kt            // 잔액 비즈니스 로직 처리
-      BalanceHistoryRepository.kt  // 잔액 거래 내역 저장소 인터페이스
-  /infrastructure (Persistence 계층)
-    /user
-      UserRepositoryJpaImpl.kt           // 유저 리포지토리 JPA 구현체
-    /reservation
-      ReservationRepositoryJpaImpl.kt    // 예약 리포지토리 JPA 구현체
-      SeatRepositoryJpaImpl.kt           // 좌석 리포지토리 JPA 구현체
-    /payment
-      PaymentRepositoryJpaImpl.kt        // 결제 리포지토리 JPA 구현체
-    /queue
-      QueueRepositoryJpaImpl.kt          // 대기열 리포지토리 JPA 구현체
-    /concert
-      ConcertRepositoryJpaImpl.kt        // 콘서트 리포지토리 JPA 구현체
-      ConcertScheduleRepositoryJpaImpl.kt // 콘서트 일정 리포지토리 JPA 구현체
-    /balance
-      BalanceHistoryRepositoryJpaImpl.kt // 잔액 거래 내역 리포지토리 JPA 구현체
+  ├── main
+  │   ├── kotlin
+  │   │   └── io
+  │   │       └── hhplus
+  │   │           └── concertreservationservice
+  │   │               ├── ConcertReservationServiceApplication.kt
+  │   │               ├── application (Application 계층)
+  │   │               │   ├── TimeOverException.kt
+  │   │               │   ├── auth
+  │   │               │   │   └── AuthFacade.kt
+  │   │               │   ├── balance
+  │   │               │   │   └── BalanceFacade.kt
+  │   │               │   ├── concert
+  │   │               │   │   └── ConcertFacade.kt
+  │   │               │   ├── payment
+  │   │               │   │   └── PaymentFacade.kt
+  │   │               │   ├── queue
+  │   │               │   │   └── QueueFacade.kt
+  │   │               │   ├── reservation
+  │   │               │   ├── scheduler
+  │   │               │   │   ├── QueueScheduler.kt
+  │   │               │   │   └── ReservationCleanupScheduler.kt
+  │   │               │   └── user
+  │   │               ├── config
+  │   │               │   └── SwaggerConfig.kt
+  │   │               ├── domain (Domain 계층)
+  │   │               │   ├── balance
+  │   │               │   │   ├── BalanceHistory.kt
+  │   │               │   │   └── BalanceService.kt
+  │   │               │   ├── common
+  │   │               │   │   └── Auditable.kt
+  │   │               │   ├── concert
+  │   │               │   │   ├── Concert.kt
+  │   │               │   │   ├── ConcertRepository.kt
+  │   │               │   │   ├── ConcertSchedule.kt
+  │   │               │   │   ├── ConcertScheduleRepository.kt
+  │   │               │   │   ├── ConcertScheduleService.kt
+  │   │               │   │   └── ConcertService.kt
+  │   │               │   ├── payment
+  │   │               │   │   ├── Payment.kt
+  │   │               │   │   ├── PaymentRepository.kt
+  │   │               │   │   ├── PaymentService.kt
+  │   │               │   │   └── PaymentStatus.kt
+  │   │               │   ├── queue
+  │   │               │   │   ├── QueueEntry.kt
+  │   │               │   │   ├── QueueRepository.kt
+  │   │               │   │   ├── QueueService.kt
+  │   │               │   │   └── QueueStatus.kt
+  │   │               │   ├── reservation
+  │   │               │   │   ├── Reservation.kt
+  │   │               │   │   ├── ReservationRepository.kt
+  │   │               │   │   ├── ReservationService.kt
+  │   │               │   │   └── ReservationStatus.kt
+  │   │               │   ├── seat
+  │   │               │   │   ├── Seat.kt
+  │   │               │   │   ├── SeatAlreadyReservedException.kt
+  │   │               │   │   ├── SeatRepository.kt
+  │   │               │   │   ├── SeatService.kt
+  │   │               │   │   └── SeatStatus.kt
+  │   │               │   └── user
+  │   │               │       ├── User.kt
+  │   │               │       ├── UserRepository.kt
+  │   │               │       └── UserService.kt
+  │   │               ├── infrastructure (Persistence 계층)
+  │   │               │   ├── concert
+  │   │               │   │   ├── ConcertRepositoryImpl.kt
+  │   │               │   │   ├── ConcertScheduleRepositoryImpl.kt
+  │   │               │   │   ├── JpaConcertRepository.kt
+  │   │               │   │   └── JpaConcertScheduleRepository.kt
+  │   │               │   ├── payment
+  │   │               │   │   ├── JpaPaymentRepository.kt
+  │   │               │   │   └── PaymentRepositoryImpl.kt
+  │   │               │   ├── queue
+  │   │               │   │   ├── JpaQueueRepository.kt
+  │   │               │   │   └── QueueRepositoryImpl.kt
+  │   │               │   ├── reservation
+  │   │               │   │   ├── JpaReservationRepository.kt
+  │   │               │   │   └── ReservationRepositoryImpl.kt
+  │   │               │   ├── seat
+  │   │               │   │   ├── JpaSeatRepository.kt
+  │   │               │   │   └── SeatRepositoryImpl.kt
+  │   │               │   └── user
+  │   │               │       ├── JpaUserRepository.kt
+  │   │               │       └── UserRepositoryImpl.kt
+  │   │               └── interfaces (Presentation 계층)
+  │   │                   ├── QueueController.kt
+  │   │                   ├── api
+  │   │                   │   ├── balance
+  │   │                   │   │   └── BalanceController.kt
+  │   │                   │   ├── concert
+  │   │                   │   ├── payment
+  │   │                   │   │   └── PaymentController.kt
+  │   │                   │   ├── reservation
+  │   │                   │   │   └── ReservationController.kt
+  │   │                   │   └── user
+  │   │                   │       ├── AuthController.kt
+  │   │                   │       └── UserController.kt
+  │   │                   ├── common
+  │   │                   │   └── AuthUtil.kt
+  │   │                   └── dto
+  │   │                       ├── ApiResponse.kt
+  │   │                       ├── AuthResponse.kt
+  │   │                       ├── BalanceRequest.kt
+  │   │                       ├── ChargeRequest.kt
+  │   │                       ├── ConcertScheduleDto.kt
+  │   │                       ├── LoginRequest.kt
+  │   │                       ├── PaymentRequest.kt
+  │   │                       ├── PaymentResponse.kt
+  │   │                       ├── QueueRegistrationRequest.kt
+  │   │                       ├── QueueTokenResponse.kt
+  │   │                       ├── ReservationRequest.kt
+  │   │                       ├── ReservationResponse.kt
+  │   │                       ├── SeatAvailabilityResponse.kt
+  │   │                       ├── SeatDto.kt
+  │   │                       └── TokenResponse.kt
+  └── resources
+      ├── application-mysql.yml
+      └── application.yml
 
 ```
 

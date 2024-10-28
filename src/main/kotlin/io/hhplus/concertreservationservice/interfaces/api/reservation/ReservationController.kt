@@ -3,6 +3,7 @@ package io.hhplus.concertreservationservice.interfaces.api.reservation
 import io.hhplus.concertreservationservice.application.concert.ConcertFacade
 import io.hhplus.concertreservationservice.interfaces.dto.*
 import io.swagger.v3.oas.annotations.Operation
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -16,10 +17,10 @@ class ReservationController(
     @Operation(summary = "예약 가능한 날짜 목록 조회", description = "예약 가능한 날짜 목록 조회 API")
     @GetMapping("/available-dates")
     fun getAvailableConcertSchedules(
-        @RequestHeader("User-Token") userToken: String,
-        @RequestHeader("Queue-Token") queueToken: String
+        request: HttpServletRequest
     ): ResponseEntity<List<ConcertScheduleDto>> {
-
+        val userToken = request.getAttribute("userToken") as String
+        val queueToken = request.getAttribute("queueToken") as String
         val schedules = concertFacade.getAvailableConcertSchedules(userToken, queueToken)
         return ResponseEntity.ok(schedules)
     }
@@ -27,10 +28,11 @@ class ReservationController(
     @Operation(summary = "예약 가능한 좌석 목록 조회", description = "예약 가능한 좌석 목록 조회 API")
     @GetMapping("/available-seats")
     fun getAvailableSeats(
-        @RequestHeader("User-Token") userToken: String,
-        @RequestHeader("Queue-Token") queueToken: String,
+        request: HttpServletRequest,
         @RequestParam("concertScheduleId") concertScheduleId: Long
     ): ResponseEntity<List<SeatDto>> {
+        val userToken = request.getAttribute("userToken") as String
+        val queueToken = request.getAttribute("queueToken") as String
         val seats = concertFacade.getAvailableSeats(userToken, queueToken, concertScheduleId)
         return ResponseEntity.ok(seats)
     }
@@ -38,11 +40,12 @@ class ReservationController(
     @Operation(summary = "좌석 예약", description = "좌석 예약 API")
     @PostMapping("/reserve")
     fun reserveSeat(
-        @RequestHeader("User-Token") userToken: String,
-        @RequestHeader("Queue-Token") queueToken: String,
-        @RequestBody request: ReservationRequest
+        request: HttpServletRequest,
+        @RequestBody reservationRequest: ReservationRequest
     ): ResponseEntity<ReservationResponse> {
-        val response = concertFacade.reserveSeat(userToken, queueToken, request)
+        val userToken = request.getAttribute("userToken") as String
+        val queueToken = request.getAttribute("queueToken") as String
+        val response = concertFacade.reserveSeat(userToken, queueToken, reservationRequest)
         return ResponseEntity.ok(response)
     }
 }

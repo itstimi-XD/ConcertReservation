@@ -36,4 +36,10 @@ interface JpaQueueRepository : JpaRepository<QueueEntry, Long> {
         concertScheduleId: Long,
         status: QueueStatus
     ): QueueEntry?
+
+    fun existsByUserIdAndConcertScheduleIdAndStatus(
+        userId: Long,
+        concertScheduleId: Long,
+        status: QueueStatus
+    ): Boolean
 }

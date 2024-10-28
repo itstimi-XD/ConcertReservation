@@ -76,4 +76,12 @@ class QueueRepositoryImpl(
     override fun deleteByUserId(userId: Long) {
         jpaQueueRepository.deleteByUserId(userId)
     }
+
+    override fun existsByUserIdAndConcertScheduleIdAndStatus(
+        userId: Long,
+        concertScheduleId: Long,
+        status: QueueStatus
+    ): Boolean {
+        return jpaQueueRepository.existsByUserIdAndConcertScheduleIdAndStatus(userId, concertScheduleId, status)
+    }
 }

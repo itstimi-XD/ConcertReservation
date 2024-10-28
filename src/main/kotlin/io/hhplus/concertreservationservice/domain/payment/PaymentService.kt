@@ -1,6 +1,9 @@
 package io.hhplus.concertreservationservice.domain.payment
 
 import io.hhplus.concertreservationservice.domain.user.UserRepository
+import io.hhplus.concertreservationservice.exception.BusinessException
+import io.hhplus.concertreservationservice.exception.ErrorType
+import io.hhplus.concertreservationservice.exception.ResourceNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -17,11 +20,11 @@ class PaymentService(
 
         // 사용자 정보 락 처리
         val user = userRepository.findByIdForUpdate(userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw ResourceNotFoundException("User not found")
 
         // 잔액 확인
         if (user.balance < seatPrice) {
-            throw IllegalArgumentException("Insufficient balance")
+            throw  BusinessException(ErrorType.INSUFFICIENT_BALANCE)
         }
 
         // 잔액 차감

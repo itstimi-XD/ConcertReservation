@@ -1,6 +1,7 @@
 package io.hhplus.concertreservationservice.domain.balance
 
 import io.hhplus.concertreservationservice.domain.user.UserRepository
+import io.hhplus.concertreservationservice.exception.ResourceNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -12,7 +13,7 @@ class BalanceService(
     @Transactional
     fun rechargeBalance(userId: Long, amount: Int) {
         val user = userRepository.findByIdForUpdate(userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw ResourceNotFoundException("User not found")
 
         user.balance += amount
         userRepository.save(user)
@@ -20,7 +21,7 @@ class BalanceService(
 
     fun getBalance(userId: Long): Int {
         val user = userRepository.findById(userId)
-            ?: throw IllegalArgumentException("User not found")
+            ?: throw ResourceNotFoundException("User not found")
         return user.balance.toInt()
     }
 }
