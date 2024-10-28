@@ -1,6 +1,9 @@
 package io.hhplus.concertreservationservice.domain.reservation
 
 import io.hhplus.concertreservationservice.domain.concert.ConcertScheduleRepository
+import io.hhplus.concertreservationservice.domain.seat.SeatAlreadyReservedException
+import io.hhplus.concertreservationservice.domain.seat.SeatRepository
+import io.hhplus.concertreservationservice.domain.seat.SeatStatus
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,19 +24,19 @@ class ReservationService(
             val expirationTime = now.plusMinutes(expirationMinutes)
 
             // 콘서트 스케줄 확인
-            val concertSchedule = concertScheduleRepository.findById(concertScheduleId)
+            concertScheduleRepository.findById(concertScheduleId)
                 ?: throw IllegalArgumentException("Concert schedule not found")
 
             // 좌석 정보 조회
-            val seat = seatRepository.findByConcertScheduleIdAndSeatNumber(concertScheduleId, seatNumber)
+            val seat = seatRepository.findByConcertScheduleIdAndSeatNumberWithLock(concertScheduleId, seatNumber)
                 ?: throw IllegalArgumentException("Seat not found")
 
-            if (seat.seatStatus != "available") {
+            if (seat.seatStatus != SeatStatus.AVAILABLE) {
                 throw IllegalArgumentException("Seat is already occupied")
             }
 
             // 좌석 상태 업데이트
-            seat.seatStatus = "occupied"
+            seat.seatStatus = SeatStatus.OCCUPIED
             seat.userId = userId
             seat.updatedAt = now
 
@@ -46,7 +49,7 @@ class ReservationService(
                 concertScheduleId = concertScheduleId,
                 seatId = seat.id,
                 seatNumber = seat.seatNumber,
-                status = ReservationStatus.RESERVED.value,
+                status = ReservationStatus.RESERVED,
                 createdAt = now,
                 updatedAt = now,
                 expirationTime = expirationTime // 만료 시간 설정
@@ -57,4 +60,17 @@ class ReservationService(
             throw SeatAlreadyReservedException("Seat is already reserved by another user")
         }
     }
+
+    fun findReservationByIdAndUserId(reservationId: Long, userId: Long): Reservation {
+        return reservationRepository.findByIdAndUserId(reservationId, userId)
+            ?: throw IllegalArgumentException("Reservation not found")
+    }
+
+    fun updateReservationStatus(reservation: Reservation, status: ReservationStatus, now: LocalDateTime) {
+        reservation.status = status
+        reservation.updatedAt = now
+        reservationRepository.save(reservation)
+    }
+
+
 }

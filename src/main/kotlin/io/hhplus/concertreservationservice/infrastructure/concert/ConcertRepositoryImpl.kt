@@ -12,4 +12,7 @@ class ConcertRepositoryImpl(
     override fun findById(id: Long): Concert? {
         return jpaConcertRepository.findById(id).orElse(null)
     }
+    override fun save(concert: Concert): Concert {
+        return jpaConcertRepository.save(concert)
+    }
 }

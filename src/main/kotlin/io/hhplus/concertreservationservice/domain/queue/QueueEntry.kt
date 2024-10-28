@@ -22,14 +22,14 @@ data class QueueEntry(
     @Column(name = "queue_position", nullable = false)
     val queuePosition: Int,
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: String, // "waiting", "pass"
+    var status: QueueStatus,
 
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     var updatedAt: LocalDateTime = LocalDateTime.now()
-
 )
 
