@@ -3,6 +3,7 @@ package io.hhplus.concertreservationservice.domain.queue
 import java.time.LocalDateTime
 
 interface QueueRepository {
+    fun findAllByStatus(status: QueueStatus): List<QueueEntry>
     fun findByQueueToken(queueToken: String): QueueEntry?
     fun save(queueEntry: QueueEntry): QueueEntry
     fun findById(id: Long): QueueEntry?
