@@ -18,11 +18,14 @@ class ReservationService(
     private val concertScheduleRepository: ConcertScheduleRepository,
     private val reservationRepository: ReservationRepository
 ) {
+    companion object {
+        const val EXPIRATION_MINUTES = 5L
+    }
     @Transactional
     fun reserveSeat(userId: Long, concertScheduleId: Long, seatNumber: Int): Reservation {
         try {
-            // 예약 만료 시간 설정 (예: 5분 후)
-            val expirationMinutes = 5L
+            // 예약 만료 시간 설정
+            val expirationMinutes = EXPIRATION_MINUTES
             val now = LocalDateTime.now()
             val expirationTime = now.plusMinutes(expirationMinutes)
 
@@ -30,7 +33,7 @@ class ReservationService(
             concertScheduleRepository.findById(concertScheduleId)
                 ?: ResourceNotFoundException("Concert schedule not found")
 
-            // 좌석 정보 조회
+            // 좌석 정보 조회 (비관적 락 사용)
             val seat = seatRepository.findByConcertScheduleIdAndSeatNumberWithLock(concertScheduleId, seatNumber)
                 ?: throw ResourceNotFoundException("Seat not found")
 
@@ -38,25 +41,22 @@ class ReservationService(
                 throw SeatAlreadyOccupiedException("seatId: ${seat.id}, seatNumber: ${seat.seatNumber}")
             }
 
-            // 좌석 상태 업데이트
-            seat.seatStatus = SeatStatus.OCCUPIED
-            seat.userId = userId
+            // 좌석 점유
+            seat.occupy(userId, now)
             seat.updatedAt = now
 
-            // 좌석 저장 (낙관적 락 적용)
-            seatRepository.save(seat)
-
-            // 예약 정보 생성
-            val reservation = Reservation(
+            // 예약 생성
+            val reservation = Reservation.create(
                 userId = userId,
                 concertScheduleId = concertScheduleId,
                 seatId = seat.id,
                 seatNumber = seat.seatNumber,
-                status = ReservationStatus.RESERVED,
-                createdAt = now,
-                updatedAt = now,
-                expirationTime = expirationTime // 만료 시간 설정
+                expirationMinutes = expirationMinutes
             )
+
+            // 좌석 저장 (낙관적 락 적용)
+            seatRepository.save(seat)
+
             return reservationRepository.save(reservation)
         } catch (e: OptimisticLockingFailureException) {
             // 낙관적 락 충돌 시 예외 처리
@@ -69,9 +69,25 @@ class ReservationService(
             ?: throw ResourceNotFoundException("Reservation not found")
     }
 
-    fun updateReservationStatus(reservation: Reservation, status: ReservationStatus, now: LocalDateTime) {
-        reservation.status = status
-        reservation.updatedAt = now
+    // TODO : [생각 해보기] - @Transactional 필요 한가? 필요하다면 왜 필요한가?
+    @Transactional
+    fun confirmReservation(reservationId: Long, userId: Long) {
+        val reservation = findReservationByIdAndUserId(reservationId, userId)
+        reservation.confirmReservation()
         reservationRepository.save(reservation)
+    }
+
+    // TODO : [생각 해보기] - @Transactional 필요 한가? 필요하다면 왜 필요한가?
+    @Transactional
+    fun cancelReservation(reservationId: Long, userId: Long) {
+        val reservation = findReservationByIdAndUserId(reservationId, userId)
+        reservation.cancelReservation()
+        reservationRepository.save(reservation)
+
+        // 좌석 해제
+        val seat = seatRepository.findById(reservation.seatId)
+            ?: throw ResourceNotFoundException("Seat not found")
+        seat.release()
+        seatRepository.save(seat)
     }
 }

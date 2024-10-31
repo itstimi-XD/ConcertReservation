@@ -38,6 +38,29 @@ data class Reservation(
     val expirationTime: LocalDateTime
 ){
 
+    companion object {
+        fun create(
+            userId: Long,
+            concertScheduleId: Long,
+            seatId: Long,
+            seatNumber: Int,
+            expirationMinutes: Long,
+            currentTime: LocalDateTime = LocalDateTime.now()
+        ): Reservation {
+            val expirationTime = currentTime.plusMinutes(expirationMinutes)
+            return Reservation(
+                userId = userId,
+                concertScheduleId = concertScheduleId,
+                seatId = seatId,
+                seatNumber = seatNumber,
+                status = ReservationStatus.RESERVED,
+                createdAt = currentTime,
+                updatedAt = currentTime,
+                expirationTime = expirationTime
+            )
+        }
+    }
+    
     // 예약 만료 여부 확인
     fun isExpired(currentTime: LocalDateTime): Boolean {
         return expirationTime.isBefore(currentTime)
