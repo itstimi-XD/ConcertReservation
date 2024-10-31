@@ -28,4 +28,16 @@ data class Payment(
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     var updatedAt: LocalDateTime = LocalDateTime.now()
-)
+){
+    companion object {
+        fun create(userId: Long, reservationId: Long, amount: Int): Payment {
+            return Payment(
+                userId = userId,
+                reservationId = reservationId,
+                amount = amount,
+                status = PaymentStatus.COMPLETED // 결제 완료 상태로 설정
+            )
+        }
+    }
+}
+

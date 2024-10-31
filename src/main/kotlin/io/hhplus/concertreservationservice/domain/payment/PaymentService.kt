@@ -32,14 +32,7 @@ class PaymentService(
         userRepository.save(user)
 
         // 결제 정보 생성
-        val payment = Payment(
-            userId = userId,
-            reservationId = reservationId,
-            amount = seatPrice,
-            status = PaymentStatus.COMPLETED,
-            createdAt = now,
-            updatedAt = now
-        )
+        val payment = Payment.create(userId, reservationId, seatPrice)
         paymentRepository.save(payment)
         return payment
     }

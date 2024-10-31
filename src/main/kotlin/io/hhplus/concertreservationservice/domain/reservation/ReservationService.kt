@@ -83,11 +83,5 @@ class ReservationService(
         val reservation = findReservationByIdAndUserId(reservationId, userId)
         reservation.cancelReservation()
         reservationRepository.save(reservation)
-
-        // 좌석 해제
-        val seat = seatRepository.findById(reservation.seatId)
-            ?: throw ResourceNotFoundException("Seat not found")
-        seat.release()
-        seatRepository.save(seat)
     }
 }

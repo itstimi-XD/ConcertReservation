@@ -22,6 +22,7 @@ class PaymentFacade(
     private val authUtil: AuthUtil
 ) {
     fun makePayment(userToken: String, queueToken: String, request: PaymentRequest): PaymentResponse {
+        // TODO : 인터셉터와 겹치는 로직일 경우 하나는 없앨 것
         val userId = authUtil.getUserIdIfQueueTokenValid(userToken, queueToken)
 
         // 예약 정보 조회
@@ -31,10 +32,10 @@ class PaymentFacade(
         // 예약 만료 시간 확인 및 처리
         if(reservation.isExpired(now)) {
             // 예약 만료 처리
-            reservationService.updateReservationStatus(reservation, ReservationStatus.CANCELLED, now)
+            reservationService.cancelReservation(reservation.id, userId)
 
             // 좌석 해제 처리
-            seatService.releaseSeatByReservation(reservation, now)
+            seatService.releaseSeatByReservation(reservation.seatId)
 
             // 대기열에서 사용자 제거
             queueService.deleteQueueByUserId(userId)
@@ -53,7 +54,7 @@ class PaymentFacade(
         val payment = paymentService.makePayment(userId, request.reservationId, seatPrice)
 
         // 예약 상태 업데이트
-        reservationService.updateReservationStatus(reservation, ReservationStatus.PAYMENT_COMPLETED, now)
+        reservationService.confirmReservation(reservation.id, userId)
 
         return PaymentResponse(
             paymentId = payment.id,
