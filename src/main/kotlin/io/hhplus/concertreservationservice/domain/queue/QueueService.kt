@@ -24,7 +24,7 @@ class QueueService(
     fun isValidQueueToken(token: String): Boolean {
         val queueEntry = queueRepository.findByQueueToken(token)
             ?: return false
-        return queueEntry.status == QueueStatus.COMPLETED
+        return queueEntry.isCompleted()
     }
 
     fun isUserAlreadyInQueue(userId: Long, concertScheduleId: Long): Boolean {
@@ -58,14 +58,14 @@ class QueueService(
             ?: throw QueueException(ErrorType.INVALID_QUEUE_TOKEN, "queueToken: $queueToken")
     }
 
+    // TODO : [생각 해보기] - @Transactional 필요 한가? 필요하다면 왜 필요한가?
     fun processNextInQueue() {
         // 줄에서 맨 앞에 서있는 사용자 선택
         val nextEntry = queueRepository.findTopByStatusOrderByQueuePositionAsc(QueueStatus.WAITING)
             ?: throw QueueException(ErrorType.QUEUE_EMPTY)
 
         // 상태 변경
-        nextEntry.status = QueueStatus.COMPLETED
-        nextEntry.updatedAt = LocalDateTime.now()
+        nextEntry.complete()
         queueRepository.save(nextEntry)
     }
 
@@ -74,6 +74,7 @@ class QueueService(
         return (queuePosition - 1) * WAIT_TIME_PER_PERSON
     }
 
+    // TODO : [생각 해보기] - @Transactional 필요 한가? 필요하다면 왜 필요한가?
     fun processNextUsersByConcertSchedule(concertScheduleId: Long) {
         val waitingUsers = queueRepository.findByConcertScheduleIdAndStatusOrderByQueuePositionAsc(
             concertScheduleId,
@@ -81,18 +82,19 @@ class QueueService(
             passLimit
         )
         waitingUsers.forEach { queueEntry ->
-            queueEntry.status = QueueStatus.COMPLETED
-            queueEntry.updatedAt = LocalDateTime.now()
+            queueEntry.complete()
             queueRepository.save(queueEntry)
         }
     }
 
+    // TODO : [생각 해보기] - @Transactional 필요 한가? 필요하다면 왜 필요한가?
     fun removeExpiredEntries() {
-        val expirationTime = LocalDateTime.now().minusMinutes(expirationMinutes)
-        val expiredEntries = queueRepository.findAllByStatusAndUpdatedAtBefore(QueueStatus.COMPLETED, expirationTime)
+        val entries = queueRepository.findAllByStatus(QueueStatus.COMPLETED)
+        val expiredEntries = entries.filter { it.isExpired(expirationMinutes) }
         queueRepository.deleteAll(expiredEntries)
     }
 
+    // TODO : [생각 해보기] - @Transactional 필요 한가? 필요하다면 왜 필요한가?
     fun deleteQueueByUserId(userId: Long) {
         queueRepository.deleteByUserId(userId)
     }
