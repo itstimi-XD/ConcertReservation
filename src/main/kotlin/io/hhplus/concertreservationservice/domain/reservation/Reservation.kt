@@ -1,5 +1,7 @@
 package io.hhplus.concertreservationservice.domain.reservation
 
+import io.hhplus.concertreservationservice.exception.BusinessException
+import io.hhplus.concertreservationservice.exception.ErrorType
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -45,5 +47,18 @@ data class Reservation(
     fun updateStatus(newStatus: ReservationStatus, currentTime: LocalDateTime) {
         status = newStatus
         updatedAt = currentTime
+    }
+
+    // 예약 확인 메서드
+    fun confirmReservation(currentTime: LocalDateTime = LocalDateTime.now()) {
+        if (isExpired(currentTime)) {
+            throw BusinessException(ErrorType.INVALID_RESERVATION_STATUS, "Reservation has expired")
+        }
+        updateStatus(ReservationStatus.PAYMENT_COMPLETED, currentTime)
+    }
+
+    // 예약 취소 메서드
+    fun cancelReservation(currentTime: LocalDateTime = LocalDateTime.now()) {
+        updateStatus(ReservationStatus.CANCELLED, currentTime)
     }
 }
