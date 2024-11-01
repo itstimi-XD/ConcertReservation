@@ -17,8 +17,4 @@ interface JpaUserRepository : JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.id = :userId")
     fun findByIdForUpdate(@Param("userId") userId: Long): User?
 
-    // JpaRepository에서 제공하는 메서드:
-    // - findById(id: Long): Optional<User>
-    // - save(entity: User): User
-    // 따라서 별도로 선언하지 않아도 됩니다.
 }
