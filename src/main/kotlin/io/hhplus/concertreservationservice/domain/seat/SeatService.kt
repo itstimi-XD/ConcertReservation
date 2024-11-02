@@ -33,12 +33,10 @@ class SeatService(
             ?: throw ResourceNotFoundException("Seat not found")
     }
 
-    fun releaseSeatByReservation(reservation: Reservation, now: LocalDateTime) {
-        val seat = seatRepository.findById(reservation.seatId)
+    fun releaseSeatByReservation(seatId: Long) {
+        val seat = seatRepository.findById(seatId)
             ?: throw ResourceNotFoundException("Seat not found")
-        seat.seatStatus = SeatStatus.AVAILABLE
-        seat.userId = null
-        seat.updatedAt = now
+        seat.release()
         seatRepository.save(seat)
     }
 

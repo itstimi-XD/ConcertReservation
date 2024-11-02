@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "queue_entries")
-data class QueueEntry(
+class QueueEntry(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
@@ -20,7 +20,7 @@ data class QueueEntry(
     val concertScheduleId: Long,
 
     @Column(name = "queue_position", nullable = false)
-    val queuePosition: Int,
+    var queuePosition: Int,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -31,5 +31,27 @@ data class QueueEntry(
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     var updatedAt: LocalDateTime = LocalDateTime.now()
-)
+){
+    fun complete() {
+        this.status = QueueStatus.COMPLETED
+        this.updatedAt = LocalDateTime.now()
+    }
+
+    fun isCompleted(): Boolean {
+        return this.status == QueueStatus.COMPLETED
+    }
+
+    fun isExpired(expirationMinutes: Long): Boolean {
+        return this.updatedAt.isBefore(LocalDateTime.now().minusMinutes(expirationMinutes))
+    }
+
+    fun isWaiting(): Boolean {
+        return this.status == QueueStatus.WAITING
+    }
+
+    fun updatePosition(newPosition: Int) {
+        this.queuePosition = newPosition
+        this.updatedAt = LocalDateTime.now()
+    }
+}
 

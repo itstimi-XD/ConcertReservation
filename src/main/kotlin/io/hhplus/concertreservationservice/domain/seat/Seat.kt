@@ -1,5 +1,6 @@
 package io.hhplus.concertreservationservice.domain.seat
 
+import io.hhplus.concertreservationservice.exception.SeatAlreadyOccupiedException
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -36,5 +37,22 @@ data class Seat(
     @Version // 낙관적 락을 위한 버전 필드
     @Column(name = "version")
     var version: Long = 0
-)
+){
+    // 좌석 점유 메서드
+    fun occupy(userId: Long, currentTime: LocalDateTime = LocalDateTime.now()) {
+        if (seatStatus != SeatStatus.AVAILABLE) {
+            throw SeatAlreadyOccupiedException("Seat is already occupied")
+        }
+        this.seatStatus = SeatStatus.OCCUPIED
+        this.userId = userId
+        this.updatedAt = currentTime
+    }
+
+    // 좌석 해제 메서드
+    fun release(currentTime: LocalDateTime = LocalDateTime.now()) {
+        this.seatStatus = SeatStatus.AVAILABLE
+        this.userId = null
+        this.updatedAt = currentTime
+    }
+}
 
