@@ -42,4 +42,6 @@ interface JpaQueueRepository : JpaRepository<QueueEntry, Long> {
         concertScheduleId: Long,
         status: QueueStatus
     ): Boolean
+
+    fun findAllByStatus(status: QueueStatus): List<QueueEntry>
 }

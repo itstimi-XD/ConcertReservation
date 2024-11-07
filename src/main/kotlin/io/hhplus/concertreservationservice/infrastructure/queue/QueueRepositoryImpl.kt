@@ -16,6 +16,10 @@ class QueueRepositoryImpl(
         return jpaQueueRepository.deleteAll(entries)
     }
 
+    override fun findAllByStatus(status: QueueStatus): List<QueueEntry> {
+        return jpaQueueRepository.findAllByStatus(status)
+    }
+
     override fun findByQueueToken(queueToken: String): QueueEntry? {
         return jpaQueueRepository.findByQueueToken(queueToken)
     }
