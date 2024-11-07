@@ -49,8 +49,10 @@ class PaymentFacade(
             )
         }
 
-        // 결제 처리
+
+        // 해당하는 좌석의 가격을 가져와서
         val seatPrice = seatService.getSeatPrice(reservation.seatId)
+        // 결제 처리
         val payment = paymentService.makePayment(userId, request.reservationId, seatPrice)
 
         // 예약 상태 업데이트

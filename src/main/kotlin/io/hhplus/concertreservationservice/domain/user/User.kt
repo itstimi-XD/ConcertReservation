@@ -1,5 +1,7 @@
 package io.hhplus.concertreservationservice.domain.user
 
+import io.hhplus.concertreservationservice.exception.BusinessException
+import io.hhplus.concertreservationservice.exception.ErrorType
 import jakarta.persistence.*
 
 @Entity
@@ -20,4 +22,18 @@ data class User(
 
     @Column(nullable = false)
     var balance: Double = 0.0
-)
+){
+    // 잔액 차감 메서드
+    fun deductBalance(amount: Double) {
+        if (this.balance < amount) {
+            throw  BusinessException(ErrorType.INSUFFICIENT_BALANCE)
+        }
+        this.balance -= amount
+    }
+
+    // 잔액 충전 메서드
+    fun addBalance(amount: Double) {
+        this.balance += amount
+    }
+
+}
