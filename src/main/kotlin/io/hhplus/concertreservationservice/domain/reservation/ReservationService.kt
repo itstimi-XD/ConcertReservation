@@ -43,7 +43,6 @@ class ReservationService(
 
             // 좌석 점유
             seat.occupy(userId, now)
-            seat.updatedAt = now
 
             // 예약 생성
             val reservation = Reservation.create(
@@ -58,6 +57,7 @@ class ReservationService(
             seatRepository.save(seat)
 
             return reservationRepository.save(reservation)
+            // TODO : 비관적 락이 적용된 것이라면 아래의 낙관락 충돌 시 예외처리는 필요 없어짐. 검토 필요.
         } catch (e: OptimisticLockingFailureException) {
             // 낙관적 락 충돌 시 예외 처리
             throw ConcurrencyException("좌석 예약 중 동시 수정이 발생했습니다. 다시 시도해 주세요.")

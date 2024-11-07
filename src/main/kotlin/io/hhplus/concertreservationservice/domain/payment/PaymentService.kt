@@ -1,12 +1,9 @@
 package io.hhplus.concertreservationservice.domain.payment
 
 import io.hhplus.concertreservationservice.domain.user.UserRepository
-import io.hhplus.concertreservationservice.exception.BusinessException
-import io.hhplus.concertreservationservice.exception.ErrorType
 import io.hhplus.concertreservationservice.exception.ResourceNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service
 class PaymentService(
@@ -16,19 +13,13 @@ class PaymentService(
 
     @Transactional
     fun makePayment(userId: Long, reservationId: Long, seatPrice: Int): Payment {
-        val now = LocalDateTime.now()
 
         // 사용자 정보 락 처리
         val user = userRepository.findByIdForUpdate(userId)
             ?: throw ResourceNotFoundException("User not found")
 
-        // 잔액 확인
-        if (user.balance < seatPrice) {
-            throw  BusinessException(ErrorType.INSUFFICIENT_BALANCE)
-        }
-
-        // 잔액 차감
-        user.balance -= seatPrice
+        // 잔액 차감 (User 엔티티의 메서드 호출)
+        user.deductBalance(seatPrice.toDouble())
         userRepository.save(user)
 
         // 결제 정보 생성
