@@ -1,8 +1,8 @@
 
-# 쿼리 성능 개선 보고서
+# 쿼리 성능 개선 "시도" 보고서
 
 ## 1. 개요
-이 문서는 서비스에서 자주 사용되는 쿼리에 대해 성능 개선 작업을 시도한 결과를 정리한 보고서입니다. 
+이 문서는 서비스에서 자주 사용되는 쿼리에 대해 성능 개선 작업을 시도한 결과를 정리한 보고서입니다.
 쿼리 실행 전후의 Explain Plan 결과와 실행 시간 비교를 통해 인덱스 추가로 인한 변화를 정리합니다.
 
 ---
@@ -22,7 +22,7 @@ WHERE concert_id = 1;
 ### 3.1 특정 콘서트 일정의 잔여 좌석 조회
 #### 인덱스 추가 전
 - Type: `ALL` (풀 스캔)
-- Rows: 100000 
+- Rows: 100000
 - Extra: `Using where`
 
 #### 인덱스 추가 후
@@ -31,8 +31,14 @@ WHERE concert_id = 1;
 - Extra: `NULL`
 
 **캡처: Explain Plan 비교**
-![Explain Plan 전](./document/pic/스크린샷 2024-11-16 오전 8.48.16.png)
-![Explain Plan 후](./document/pic/스크린샷 2024-11-16 오전 8.53.39.png)
+- 인덱스 추가 전
+  ![image](https://github.com/itstimi-XD/ConcertReservation/blob/doc/query-index-improvements/document/pic/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-11-16%20%EC%98%A4%EC%A0%84%208.48.16.png?raw=true)
+
+
+- 인덱스 추가 후
+  ![image](https://github.com/itstimi-XD/ConcertReservation/blob/doc/query-index-improvements/document/pic/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-11-16%20%EC%98%A4%EC%A0%84%208.53.39.png?raw=true)
+
+
 
 ---
 
@@ -43,8 +49,10 @@ WHERE concert_id = 1;
 | `SELECT remaining_seats ...`      | 24ms            | 26ms           | 개선 실패..! |
 
 **캡처: 실행 시간 비교**
-![실행 시간 비교 - 전](./document/pic/before_indexing_consert_schedule.png)
-![실행 시간 비교 - 후](./document/pic/스크린샷 2024-11-16 오전 8.57.22.png)
+- 인덱스 적용 전
+  ![image](https://github.com/itstimi-XD/ConcertReservation/blob/doc/query-index-improvements/document/pic/before_indexing_consert_schedule.png?raw=true)
+- 인덱스 적용 후
+  ![image](https://github.com/itstimi-XD/ConcertReservation/blob/doc/query-index-improvements/document/pic/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-11-16%20%EC%98%A4%EC%A0%84%208.57.22.png?raw=true)
 
 ---
 
@@ -61,7 +69,8 @@ ON dbkimjusubbl.concert_schedules (concert_id);
 - 풀 스캔(`ALL`)을 제거하고 효율적인 검색을 위해 인덱스를 추가함.
 
 **캡처: 인덱스 생성**
-![인덱스 생성](./document/pic/스크린샷 2024-11-16 오전 8.58.18.png)
+
+![인덱스 생성](https://github.com/itstimi-XD/ConcertReservation/blob/doc/query-index-improvements/document/pic/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-11-16%20%EC%98%A4%EC%A0%84%208.58.18.png?raw=true)
 
 ---
 
