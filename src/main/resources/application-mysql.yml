@@ -11,8 +11,18 @@ spring:
     hibernate:
       ddl-auto: update
     properties:
-      hibernate.format_sql: true
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    show-sql: true
 
+# loggint 설정
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type.descriptor.sql.BasicBinder: trace
 scheduler:
   queueProcess:
     fixedRate: 60000 # 1분마다 실행 (밀리초 단위)
