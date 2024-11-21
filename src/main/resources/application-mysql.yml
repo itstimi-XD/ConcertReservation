@@ -16,6 +16,16 @@ spring:
         use_sql_comments: true
     show-sql: true
 
+  # Kafka 설정
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: test-pretty
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 # loggint 설정
 logging:
   level:
