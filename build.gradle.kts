@@ -59,6 +59,9 @@ dependencies {
     // Development tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+    // REDIS
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // Test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
