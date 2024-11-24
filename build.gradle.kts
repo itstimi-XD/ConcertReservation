@@ -47,8 +47,14 @@ dependencies {
     implementation("org.slf4j:slf4j-api")
     implementation("ch.qos.logback:logback-classic")
 
+    // kafka
+    implementation("org.springframework.kafka:spring-kafka")
+
     // H2 database (runtime only)
     runtimeOnly("com.h2database:h2")
+
+    // MySQL database
+    runtimeOnly("com.mysql:mysql-connector-j:8.2.0")
 
     // Development tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -56,11 +62,16 @@ dependencies {
     // Test dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    runtimeOnly("com.mysql:mysql-connector-j:8.0.32")
-
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("org.assertj:assertj-core")
+
+    testImplementation("org.springframework.kafka:spring-kafka-test")
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.testcontainers:kafka:1.20.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.0")
 }
+
 
 kotlin {
     compilerOptions {
