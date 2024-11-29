@@ -24,6 +24,6 @@ class KafkaConsumerServiceTest {
         // Then
         // 메시지가 정상적으로 처리되었는지 검증.
         verify(consumer, times(1)).consumeBeauty(message)
-        // 이게 아닌거같은데..............
+
     }
 }
