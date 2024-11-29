@@ -38,3 +38,9 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+# Logs
+*.log
+
+# Environment files
+.env
