@@ -44,5 +44,5 @@ out/
 
 # Environment files
 .env
-.monitoring/data/
+**/monitoring/data/
 
